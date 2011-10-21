@@ -8,7 +8,9 @@ import java.util.jar.JarFile;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 
-import com.nijikokun.register.payment.Methods;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
+
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -20,12 +22,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-
-
-//Register
-import com.nijikokun.register.payment.Method.MethodAccount;
-import com.nijikokun.register.payment.Method;
 
 
 //craftirc
@@ -58,6 +56,8 @@ public class DeathTpPlus extends JavaPlugin{
     //Register
     static boolean Register = false;
     boolean useRegister = false;
+    Permission permission = null;
+    Economy economy = null;
 
     //craftirc
     public static CraftIRC craftircHandle = null;
@@ -188,14 +188,18 @@ public class DeathTpPlus extends JavaPlugin{
             pm.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Normal, this);
         }
 
-
+        //Permission
+        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        if (permissionProvider != null) {
+            permission = permissionProvider.getProvider();
+        }
 
         //Register
+        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+        if (economyProvider != null) {
+            economy = economyProvider.getProvider();
+        }
 
-
-
-        getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, new server(this), Priority.Monitor, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_DISABLE, new server(this), Priority.Monitor, this);
 
 
         //craftirc
@@ -280,13 +284,13 @@ public class DeathTpPlus extends JavaPlugin{
             if (sender instanceof Player) {
                 Player player = (Player)sender;
                 String thisWorld = player.getWorld().getName().toString();
-                if (player.hasPermission("deathtpplus.worldtravel") && deathconfig.get("WORLD_TRAVEL").equalsIgnoreCase("permissions"))
+                if (permission.has(player, "deathtpplus.worldtravel") && deathconfig.get("WORLD_TRAVEL").equalsIgnoreCase("permissions"))
                 {
                     worldTravel = true;
                 }
                 double registerCost = Double.valueOf(deathconfig.get("REGISTER_COST").trim()).doubleValue();
 
-                if (player.hasPermission("deathtpplus.deathtp")) {
+                if (permission.has(player, "deathtpplus.deathtp")) {
                     canUseCommand = true;
                 }
                 else {
@@ -318,9 +322,8 @@ public class DeathTpPlus extends JavaPlugin{
                     //costs iconomy
                     if (registerCost > 0) {
                         if (useRegister) {
-                            MethodAccount account = getRegisterMethod().getAccount(player.getName());
-                            if (account != null && account.hasEnough(registerCost)) {
-                                account.subtract(registerCost);
+                            if (economy != null && economy.getBalance(player.getName()) > registerCost) {
+                                economy.withdrawPlayer(player.getName(), registerCost);
                                 player.sendMessage("You used "+registerCost+" to use /deathtp");
                             }
                             else {
@@ -391,9 +394,9 @@ public class DeathTpPlus extends JavaPlugin{
                             else {
                                 player.sendMessage("You do not have a last known death location.");
                             }
-                            if (useRegister && !teleported) {
-                                MethodAccount account = getRegisterMethod().getAccount(player.getName());
-                                account.add(registerCost);
+                            if (useRegister && !teleported && economy != null) {
+                                if (economy != null)
+                                economy.depositPlayer(player.getName(), registerCost);
                                 player.sendMessage("Giving you back "+registerCost);
                             }
                         }
@@ -428,7 +431,7 @@ public class DeathTpPlus extends JavaPlugin{
             if (sender instanceof Player) {
                 Player player = (Player)sender;
 
-                if (player.hasPermission("deathtpplus.deaths")) {
+                if (permission.playerHas(player, "deathtpplus.deaths")) {
                     canUseCommand = true;
                 }
             }
@@ -515,7 +518,7 @@ public class DeathTpPlus extends JavaPlugin{
             if (sender instanceof Player) {
                 Player player = (Player)sender;
 
-                if (player.hasPermission("deathtpplus.kills")) {
+                if (permission.playerHas(player, "deathtpplus.kills")) {
                     canUseCommand = true;
                 }
             }
@@ -593,7 +596,7 @@ public class DeathTpPlus extends JavaPlugin{
 
             if (sender instanceof Player) {
                 Player player = (Player)sender;
-                if (player.hasPermission("deathtpplus.streak")) {
+                if (permission.playerHas(player, "deathtpplus.streak")) {
                     canUseCommand = true;
                 }
             }
@@ -688,15 +691,5 @@ public class DeathTpPlus extends JavaPlugin{
         convert = convert.replace("&f", "�f");
 
         return convert;
-    }
-
-
-    public Method getRegisterMethod(){
-        try{
-            return Methods.getMethod();
-        } catch(NoClassDefFoundError err){
-        } // ugly solution, I know ...
-        return null;
-
     }
 }
