@@ -192,12 +192,14 @@ public class DeathTpPlus extends JavaPlugin{
         RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
         if (permissionProvider != null) {
             permission = permissionProvider.getProvider();
+            log.info("[" + pluginName + "] found permission provider");
         }
 
         //Register
         RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
         if (economyProvider != null) {
             economy = economyProvider.getProvider();
+            log.info("[" + pluginName + "] found economy provider");
         }
 
 
@@ -276,7 +278,7 @@ public class DeathTpPlus extends JavaPlugin{
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         String command = cmd.getName();
-        boolean canUseCommand = true;
+        boolean canUseCommand = false;
         boolean teleportok = true;
         boolean teleported = false;
 
@@ -431,9 +433,7 @@ public class DeathTpPlus extends JavaPlugin{
             if (sender instanceof Player) {
                 Player player = (Player)sender;
 
-                if (permission.playerHas(player, "deathtpplus.deaths")) {
-                    canUseCommand = true;
-                }
+                canUseCommand = permission.playerHas(player, "deathtpplus.deaths");
             }
 
             if (canUseCommand) {
@@ -518,9 +518,7 @@ public class DeathTpPlus extends JavaPlugin{
             if (sender instanceof Player) {
                 Player player = (Player)sender;
 
-                if (permission.playerHas(player, "deathtpplus.kills")) {
-                    canUseCommand = true;
-                }
+                canUseCommand = permission.playerHas(player, "deathtpplus.kills");
             }
 
             if (canUseCommand) {
@@ -591,14 +589,10 @@ public class DeathTpPlus extends JavaPlugin{
         }
 
         else if (command.equals("streak")) {
-            // Todo ???
-            canUseCommand = true;
 
             if (sender instanceof Player) {
                 Player player = (Player)sender;
-                if (permission.playerHas(player, "deathtpplus.streak")) {
-                    canUseCommand = true;
-                }
+                canUseCommand = permission.playerHas(player, "deathtpplus.streak");
             }
 
             if (canUseCommand) {
@@ -664,6 +658,12 @@ public class DeathTpPlus extends JavaPlugin{
 
 
                 }
+                else {
+                    return true;
+                }
+            }
+            else {
+                return true;
             }
 
         }
