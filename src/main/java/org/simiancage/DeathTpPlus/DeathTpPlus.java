@@ -137,6 +137,7 @@ public class DeathTpPlus extends JavaPlugin{
         deathevents.put("VOID", (List<String>) configuration.getList("void"));
         deathevents.put("WOLF", (List<String>) configuration.getList("wolf"));
         deathevents.put("LIGHTNING", (List<String>) configuration.getList("lightning"));
+        deathevents.put("SUICIDE", (List<String>) configuration.getList("suicide"));
         deathevents.put("UNKNOWN", (List<String>) configuration.getList("unknown"));
         deathevents.put("STARVATION", (List<String>) configuration.getList("starvation"));
         deathevents.put("CAVESPIDER", (List<String>) configuration.getList("cavespider"));
@@ -256,6 +257,7 @@ public class DeathTpPlus extends JavaPlugin{
         configuration.addDefault("void", "");
         configuration.addDefault("wolf", "");
         configuration.addDefault("lightning", "");
+        configuration.addDefault("suicide", "");
         configuration.addDefault("unknown", "");
         configuration.addDefault("starvation", "");
         configuration.addDefault("cavespider", "");
