@@ -158,21 +158,21 @@ public class DTPEntityListener extends EntityListener {
                     //CraftIRC
                     if (DeathTpPlus.craftircHandle != null) {
                         String ircAnnounce;
-                        ircAnnounce = eventAnnounce.replace("�0", "");
-                        ircAnnounce = ircAnnounce.replace("�2", "");
-                        ircAnnounce = ircAnnounce.replace("�3", "");
-                        ircAnnounce = ircAnnounce.replace("�4", "");
-                        ircAnnounce = ircAnnounce.replace("�5", "");
-                        ircAnnounce = ircAnnounce.replace("�6", "");
-                        ircAnnounce = ircAnnounce.replace("�7", "");
-                        ircAnnounce = ircAnnounce.replace("�8", "");
-                        ircAnnounce = ircAnnounce.replace("�9", "");
-                        ircAnnounce = ircAnnounce.replace("�a", "");
-                        ircAnnounce = ircAnnounce.replace("�b", "");
-                        ircAnnounce = ircAnnounce.replace("�c", "");
-                        ircAnnounce = ircAnnounce.replace("�d", "");
-                        ircAnnounce = ircAnnounce.replace("�e", "");
-                        ircAnnounce = ircAnnounce.replace("�f", "");
+                        ircAnnounce = eventAnnounce.replace("§0", "");
+                        ircAnnounce = ircAnnounce.replace("§2", "");
+                        ircAnnounce = ircAnnounce.replace("§3", "");
+                        ircAnnounce = ircAnnounce.replace("§4", "");
+                        ircAnnounce = ircAnnounce.replace("§5", "");
+                        ircAnnounce = ircAnnounce.replace("§6", "");
+                        ircAnnounce = ircAnnounce.replace("§7", "");
+                        ircAnnounce = ircAnnounce.replace("§8", "");
+                        ircAnnounce = ircAnnounce.replace("§9", "");
+                        ircAnnounce = ircAnnounce.replace("§a", "");
+                        ircAnnounce = ircAnnounce.replace("§b", "");
+                        ircAnnounce = ircAnnounce.replace("§c", "");
+                        ircAnnounce = ircAnnounce.replace("§d", "");
+                        ircAnnounce = ircAnnounce.replace("§e", "");
+                        ircAnnounce = ircAnnounce.replace("§f", "");
 
                         DeathTpPlus.craftircHandle.sendMessageToTag(ircAnnounce, DeathTpPlus.deathconfig.get("CRAFT_IRC_TAG"));
                     }

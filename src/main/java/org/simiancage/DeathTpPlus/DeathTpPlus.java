@@ -673,22 +673,22 @@ public class DeathTpPlus extends JavaPlugin{
     }
 
     public String convertSamloean(String convert) {
-        convert = convert.replace("&0", "�0");
-        convert = convert.replace("&1", "�1");
-        convert = convert.replace("&2", "�2");
-        convert = convert.replace("&3", "�3");
-        convert = convert.replace("&4", "�4");
-        convert = convert.replace("&5", "�5");
-        convert = convert.replace("&6", "�6");
-        convert = convert.replace("&7", "�7");
-        convert = convert.replace("&8", "�8");
-        convert = convert.replace("&9", "�9");
-        convert = convert.replace("&a", "�a");
-        convert = convert.replace("&b", "�b");
-        convert = convert.replace("&c", "�c");
-        convert = convert.replace("&d", "�d");
-        convert = convert.replace("&e", "�e");
-        convert = convert.replace("&f", "�f");
+        convert = convert.replace("&0", "§0");
+        convert = convert.replace("&1", "§1");
+        convert = convert.replace("&2", "§2");
+        convert = convert.replace("&3", "§3");
+        convert = convert.replace("&4", "§4");
+        convert = convert.replace("&5", "§5");
+        convert = convert.replace("&6", "§6");
+        convert = convert.replace("&7", "§7");
+        convert = convert.replace("&8", "§8");
+        convert = convert.replace("&9", "§9");
+        convert = convert.replace("&a", "§a");
+        convert = convert.replace("&b", "§b");
+        convert = convert.replace("&c", "§c");
+        convert = convert.replace("&d", "§d");
+        convert = convert.replace("&e", "§e");
+        convert = convert.replace("&f", "§f");
 
         return convert;
     }
