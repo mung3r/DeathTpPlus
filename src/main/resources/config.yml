@@ -249,6 +249,9 @@ unknown:
 - '&4%n choked on a ham sandwich'
 - '&4%n died at the hands of ninja assassins'
 
+suicide:
+- '&4%n took matters into his own hands.'
+
 starvation:
 - '&4%n did forget to eat his lunch.'
 - '&4%n didn''t find the next Burger.'
