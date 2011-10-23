@@ -269,6 +269,8 @@ cavespider:
 - '&4Spiders just climbed all over %n!'
 - '&4%n forgot spiders could climb!'
 
+silverfish:
+- '&4%n was killed by a silverfish!'
 
 # ----- Streaks
 

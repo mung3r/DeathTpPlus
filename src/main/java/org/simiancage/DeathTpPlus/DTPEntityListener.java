@@ -31,7 +31,7 @@ public class DTPEntityListener extends EntityListener {
     public ArrayList<String> lastDamageType = new ArrayList<String>();
     public String beforedamage = "";
     public PlayerDeathEvent playerDeathEvent = null;
-    enum DeathTypes {FALL, DROWNING, SUFFOCATION, FIRE_TICK, FIRE, LAVA, BLOCK_EXPLOSION, CREEPER, SKELETON, SPIDER, PIGZOMBIE, ZOMBIE, CONTACT, SLIME, VOID, GHAST, WOLF, LIGHTNING, STARVATION, CAVESPIDER, ENDERMAN, PVP, FISTS, UNKNOWN;
+    enum DeathTypes {FALL, DROWNING, SUFFOCATION, FIRE_TICK, FIRE, LAVA, BLOCK_EXPLOSION, CREEPER, SKELETON, SPIDER, PIGZOMBIE, ZOMBIE, CONTACT, SLIME, VOID, GHAST, WOLF, LIGHTNING, STARVATION, CAVESPIDER, ENDERMAN, SILVERFISH, PVP, FISTS, UNKNOWN;
 
         @Override public String toString() {
             //only capitalize the first letter
@@ -62,6 +62,8 @@ public class DTPEntityListener extends EntityListener {
         try {
             if (event.getEntity() instanceof Player) {
                 Player player = (Player) event.getEntity();
+                EntityDamageEvent damageEvent = event.getEntity().getLastDamageCause();
+                damageEvent.getType();
                 String damagetype = lastDamageType.get(lastDamagePlayer.indexOf(player.getDisplayName()));
                 String eventAnnounce = "";
                 String fileOutput = "";
@@ -286,6 +288,9 @@ public class DTPEntityListener extends EntityListener {
                 else if (mob instanceof Creeper) {
                     lastdamage = "CREEPER";
                 }
+                else if (mob instanceof CaveSpider) {
+                    lastdamage = "CAVESPIDER";
+                }
                 else if (mob instanceof Spider) {
                     lastdamage = "SPIDER";
                 }
@@ -297,6 +302,12 @@ public class DTPEntityListener extends EntityListener {
                 }
                 else if (mob instanceof Slime) {
                     lastdamage = "SLIME";
+                }
+                else if (mob instanceof Enderman) {
+                    lastdamage = "ENDERMAN";
+                }
+                else if (mob instanceof Silverfish) {
+                    lastdamage = "SILVERFISH";
                 }
             }
             else if (attacker instanceof Player) {

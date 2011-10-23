@@ -142,6 +142,7 @@ public class DeathTpPlus extends JavaPlugin{
         deathevents.put("STARVATION", (List<String>) configuration.getList("starvation"));
         deathevents.put("CAVESPIDER", (List<String>) configuration.getList("cavespider"));
         deathevents.put("ENDERMAN", (List<String>) configuration.getList("enderman"));
+        deathevents.put("SILVERFISH", (List<String>) configuration.getList("silverfish"));
         //Configuration nodes
         deathconfig.put("SHOW_DEATHNOTIFY", configuration.getString("show-deathnotify"));
         deathconfig.put("ALLOW_DEATHTP", configuration.getString("allow-deathtp"));
@@ -262,6 +263,7 @@ public class DeathTpPlus extends JavaPlugin{
         configuration.addDefault("starvation", "");
         configuration.addDefault("cavespider", "");
         configuration.addDefault("enderman", "");
+        configuration.addDefault("silverfish", "");
         //Configuration nodes
         configuration.addDefault("show-deathnotify", "true");
         configuration.addDefault("allow-deathtp", "true");
