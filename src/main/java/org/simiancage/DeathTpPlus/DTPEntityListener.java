@@ -120,6 +120,9 @@ public class DTPEntityListener extends EntityListener {
                     loghowdied = howtheydied[0];
                     // Todo change into case statement and create methods for eventAnnounce
 
+                    if (getEvent(howtheydied[0]) == null) {
+                        howtheydied[0] = "UNKNOWN";
+                    }
                     eventAnnounce = getEvent(howtheydied[0]).replace("%n", player.getDisplayName());
 
                     if (howtheydied[0].matches("PVP")) {
