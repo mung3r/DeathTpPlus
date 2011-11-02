@@ -46,6 +46,10 @@ public class DTPEntityListener extends EntityListener {
 
     public String getEvent (String deathType){
         int messageindex = 0;
+        
+        if (!DeathTpPlus.deathevents.containsKey(deathType))
+            return null;
+        
         if (DeathTpPlus.deathevents.get(deathType).size() > 1)
         {
             Random rand = new Random();
