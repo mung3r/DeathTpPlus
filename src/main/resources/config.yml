@@ -182,6 +182,10 @@ pvp-fists:
 - '&4%a pummeled %n to death'
 - '&4%a crusted %n with their bare hands'
 
+pvp-tamed:
+- '&4%n was mauled by %a''s %i'
+- '&4%n''s hand was bitten by %a''s %i'
+
 block_explosion:
 - '&4Careful %n, TNT goes boom!'
 - '&4%n was last seen playing with dynamite.'
@@ -271,6 +275,10 @@ cavespider:
 
 silverfish:
 - '&4%n was killed by a silverfish!'
+- '&4%n''s knees were caps by a silverfish!'
+
+giant:
+- '&4%n was stomped by a giant!'
 
 # ----- Streaks
 

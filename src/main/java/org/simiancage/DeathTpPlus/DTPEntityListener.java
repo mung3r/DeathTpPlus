@@ -27,18 +27,6 @@ import org.bukkit.event.entity.EntityListener;
 
 public class DTPEntityListener extends EntityListener {
     public static DeathTpPlus plugin;
-    public ArrayList<String> lastDamagePlayer = new ArrayList<String>();
-    public ArrayList<String> lastDamageType = new ArrayList<String>();
-    public String beforedamage = "";
-    public PlayerDeathEvent playerDeathEvent = null;
-    enum DeathTypes {FALL, DROWNING, SUFFOCATION, FIRE_TICK, FIRE, LAVA, BLOCK_EXPLOSION, CREEPER, SKELETON, SPIDER, PIGZOMBIE, ZOMBIE, CONTACT, SLIME, VOID, GHAST, WOLF, LIGHTNING, STARVATION, CAVESPIDER, ENDERMAN, SILVERFISH, PVP, FISTS, UNKNOWN;
-
-        @Override public String toString() {
-            //only capitalize the first letter
-            String s = super.toString();
-            return s.substring(0, 1)+s.substring(1).toLowerCase();
-        }
-    }
     
     public DTPEntityListener(DeathTpPlus instance) {
         plugin = instance;
@@ -62,302 +50,204 @@ public class DTPEntityListener extends EntityListener {
 
     public void onEntityDeath(EntityDeathEvent event) {
 
-        beforedamage = "";
-        try {
-            if (event.getEntity() instanceof Player) {
-                Player player = (Player) event.getEntity();
-                EntityDamageEvent damageEvent = event.getEntity().getLastDamageCause();
-                damageEvent.getType();
-                String damagetype = lastDamageType.get(lastDamagePlayer.indexOf(player.getDisplayName()));
-                String eventAnnounce = "";
-                String fileOutput = "";
-                String line = "";
-                String[] howtheydied;
-                String loghowdied = "";
-
-                if (DeathTpPlus.deathconfig.get("ALLOW_DEATHTP").equals("true") ) {
-                    ArrayList<String> filetext = new ArrayList<String>();
-                    boolean readCheck = false;
-                    boolean newPlayerDeath = true;
-                    //text to write to file
-                    fileOutput = player.getName()+":"+player.getLocation().getX()+":"+player.getLocation().getY()+":"+player.getLocation().getZ()+":"+player.getWorld().getName().toString();
-                    try {
-                        FileReader fr = new FileReader(DeathTpPlus.locsName);
-                        BufferedReader br = new BufferedReader(fr);
-
-                        while((line = br.readLine()) != null) {
-                            if (line.contains(player.getName()+":")) {
-                                line = fileOutput;
-                                newPlayerDeath = false;
-                            }
-                            filetext.add(line);
-                            readCheck = true;
-                        }
-
-                        br.close();
-
-                        BufferedWriter out = new BufferedWriter(new FileWriter(DeathTpPlus.locsName));
-
-                        for (int i = 0; i < filetext.size(); i++) {
-                            out.write(filetext.get(i));
-                            out.newLine();
-                        }
-
-                        if (!readCheck) {
-                            out.write(fileOutput);
-                            out.newLine();
-                        }
-
-                        if (newPlayerDeath && readCheck) {
-                            out.write(fileOutput);
-                            out.newLine();
-                        }
-                        //Close the output stream
-                        out.close();
-                    }
-                    catch (IOException e) {
-                        System.out.println("cannot read file "+DeathTpPlus.locsName);
-                        System.out.println(e);
-                    }
-                }
-
-                if (DeathTpPlus.deathconfig.get("SHOW_DEATHNOTIFY").equals("true") || DeathTpPlus.deathconfig.get("SHOW_STREAKS").equals("true") || DeathTpPlus.deathconfig.get("DEATH_LOGS").equals("true") ) {
-                    howtheydied = damagetype.split(":");
-                    loghowdied = howtheydied[0];
-                    // Todo change into case statement and create methods for eventAnnounce
-
-                    if (getEvent(howtheydied[0]) == null) {
-                        howtheydied[0] = "UNKNOWN";
-                    }
-                    eventAnnounce = getEvent(howtheydied[0]).replace("%n", player.getDisplayName());
-
-                    if (howtheydied[0].matches("PVP")) {
-                        if (howtheydied[2].equals("bare hands")) {
-                            eventAnnounce = getEvent("FISTS").replace("%n", player.getDisplayName());
-                        }
-
-                        loghowdied = howtheydied[2];
-                        eventAnnounce = eventAnnounce.replace("%i", howtheydied[1]);
-                        eventAnnounce = eventAnnounce.replace("%a", howtheydied[2]);
-                        if (DeathTpPlus.deathconfig.get("SHOW_STREAKS").matches("true")){
-
-                            writeToStreak(player.getDisplayName(), howtheydied[2]);
-                        }
-                        //write kill to deathlog
-                        if (DeathTpPlus.deathconfig.get("DEATH_LOGS").matches("true")) {
-                            writeToLog("kill", howtheydied[2], player.getDisplayName());
-                        }
-                    }
-                    if (eventAnnounce.equals(""))
-                    {
-                        eventAnnounce = getEvent("UNKNOWN").replace("%n", player.getDisplayName());
-                    }
-
-                    eventAnnounce = plugin.convertSamloean(eventAnnounce);
-
-                    if (DeathTpPlus.deathconfig.get("SHOW_DEATHNOTIFY").equals("true")) {
-                        //plugin.getServer().broadcastMessage(eventAnnounce);
-                        if (event instanceof PlayerDeathEvent) {
-                            playerDeathEvent = (PlayerDeathEvent) event;
-                            playerDeathEvent.setDeathMessage(eventAnnounce);
-                        }
-
-                    }
-
-                    //CraftIRC
-                    if (DeathTpPlus.craftircHandle != null) {
-                        String ircAnnounce;
-                        ircAnnounce = eventAnnounce.replace("§0", "");
-                        ircAnnounce = ircAnnounce.replace("§2", "");
-                        ircAnnounce = ircAnnounce.replace("§3", "");
-                        ircAnnounce = ircAnnounce.replace("§4", "");
-                        ircAnnounce = ircAnnounce.replace("§5", "");
-                        ircAnnounce = ircAnnounce.replace("§6", "");
-                        ircAnnounce = ircAnnounce.replace("§7", "");
-                        ircAnnounce = ircAnnounce.replace("§8", "");
-                        ircAnnounce = ircAnnounce.replace("§9", "");
-                        ircAnnounce = ircAnnounce.replace("§a", "");
-                        ircAnnounce = ircAnnounce.replace("§b", "");
-                        ircAnnounce = ircAnnounce.replace("§c", "");
-                        ircAnnounce = ircAnnounce.replace("§d", "");
-                        ircAnnounce = ircAnnounce.replace("§e", "");
-                        ircAnnounce = ircAnnounce.replace("§f", "");
-
-                        DeathTpPlus.craftircHandle.sendMessageToTag(ircAnnounce, DeathTpPlus.deathconfig.get("CRAFT_IRC_TAG"));
-                    }
-
-                    if (DeathTpPlus.deathconfig.get("DEATH_LOGS").matches("true")) {
-                        writeToLog("death", player.getDisplayName(), loghowdied);
-                    }
-
-                    if (DeathTpPlus.deathconfig.get("SHOW_SIGN").equals("true")) {
-                        //place sign
-                        Block signBlock = player.getWorld().getBlockAt(player.getLocation().getBlockX(),
-                                player.getLocation().getBlockY(),
-                                player.getLocation().getBlockZ());
-
-                        signBlock.setType(Material.SIGN_POST);
-
-                        BlockState state = signBlock.getState();
-
-                        if (state instanceof Sign) {
-                            String signtext;
-                            Sign sign = (Sign)state;
-                            sign.setLine(0, "[RIP]");
-                            sign.setLine(1, player.getDisplayName());
-                            sign.setLine(2, "Died by");
-                            signtext = howtheydied[0].substring(0, 1)+howtheydied[0].substring(1).toLowerCase();
-                            if (howtheydied[0].equals("PVP"))
-                                signtext = howtheydied[2];
-
-                            sign.setLine(3, signtext);
-                        }
-                    }
-
-                }
-
-                //added compatibility for streaks if notify is off
-                else {
-                    howtheydied = damagetype.split(":");
-                    if (howtheydied[0].matches("PVP")) {
-                        if (DeathTpPlus.deathconfig.get("SHOW_STREAKS").matches("true"))
-                            writeToStreak(player.getDisplayName(), howtheydied[2]);
-                    }
-
-                    if (DeathTpPlus.deathconfig.get("DEATH_LOGS").matches("true")) {
-                        writeToLog("death", player.getDisplayName(), loghowdied);
-                    }
-                }
-
-
-
-            }
-        }
-        catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
-    public void onEntityDamage(EntityDamageEvent event) {
-        if(event.getEntity() instanceof Player) {
+        if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
-            //player.sendMessage(event.getType().toString());
-            lastDamageDone(player, event);
+
+            String causeOfDeath = null;
+            String killerName = null;
+            String murderWeapon = null;
+            EntityDamageEvent damageEvent = event.getEntity().getLastDamageCause();
+            
+            if (damageEvent instanceof EntityDamageByEntityEvent) {
+                Entity damager = ((EntityDamageByEntityEvent) damageEvent).getDamager();
+                if (damager instanceof Player) {
+                    if (((Player) damager).getItemInHand().getType().equals(Material.AIR)) {
+                        causeOfDeath = "FISTS";
+                        murderWeapon = "fists";
+                    }
+                    else {
+                        causeOfDeath = "PVP";
+                        murderWeapon = ((Player) damager).getItemInHand().getType().toString().replace("_", " ").toLowerCase();
+                    }
+                    killerName = ((Player) damager).getName();
+                }
+                else {
+                    if (damager instanceof Tameable) {
+                        if (((Tameable) damager).isTamed()) {
+                            causeOfDeath = "TAMED";
+                            murderWeapon = getEntityType(damager).toString().toLowerCase();
+                            killerName = ((Player) ((Tameable) damager).getOwner()).getName();
+                        }
+                    }
+                    else {
+                        causeOfDeath = getEntityType(damager).toString();
+                    }
+                }
+            }
+            else if (damageEvent.getCause() != null) {
+                causeOfDeath = damageEvent.getCause().toString();
+            }
+            
+            if (causeOfDeath == null) {
+                causeOfDeath = "UNKNOWN";
+                murderWeapon = "unknown";
+            }
+            plugin.getLogger().info("DEBUG: deathCause = " + causeOfDeath);
+            
+            String eventAnnounce = "";
+            String fileOutput = "";
+            String line = "";
+            String loghowdied = "";
+
+            if (DeathTpPlus.deathconfig.get("ALLOW_DEATHTP").equals("true") ) {
+                ArrayList<String> filetext = new ArrayList<String>();
+                boolean readCheck = false;
+                boolean newPlayerDeath = true;
+                //text to write to file
+                fileOutput = player.getName()+":"+player.getLocation().getX()+":"+player.getLocation().getY()+":"+player.getLocation().getZ()+":"+player.getWorld().getName().toString();
+                try {
+                    FileReader fr = new FileReader(DeathTpPlus.locsName);
+                    BufferedReader br = new BufferedReader(fr);
+
+                    while((line = br.readLine()) != null) {
+                        if (line.contains(player.getName()+":")) {
+                            line = fileOutput;
+                            newPlayerDeath = false;
+                        }
+                        filetext.add(line);
+                        readCheck = true;
+                    }
+
+                    br.close();
+
+                    BufferedWriter out = new BufferedWriter(new FileWriter(DeathTpPlus.locsName));
+
+                    for (int i = 0; i < filetext.size(); i++) {
+                        out.write(filetext.get(i));
+                        out.newLine();
+                    }
+
+                    if (!readCheck) {
+                        out.write(fileOutput);
+                        out.newLine();
+                    }
+
+                    if (newPlayerDeath && readCheck) {
+                        out.write(fileOutput);
+                        out.newLine();
+                    }
+                    //Close the output stream
+                    out.close();
+                }
+                catch (IOException e) {
+                    plugin.getLogger().severe(e.toString());
+                }
+            }
+
+            if (DeathTpPlus.deathconfig.get("SHOW_DEATHNOTIFY").equals("true") || DeathTpPlus.deathconfig.get("SHOW_STREAKS").equals("true") || DeathTpPlus.deathconfig.get("DEATH_LOGS").equals("true") ) {
+
+                loghowdied = causeOfDeath;
+                // TODO: change into case statement and create methods for eventAnnounce
+                eventAnnounce = getEvent(causeOfDeath).replace("%n", player.getDisplayName());
+
+                if (causeOfDeath.equals("PVP") || causeOfDeath.equals("FISTS") || causeOfDeath.equals("TAMED")) {
+                    loghowdied = killerName;
+                    eventAnnounce = eventAnnounce.replace("%i", murderWeapon);
+                    eventAnnounce = eventAnnounce.replace("%a", killerName);
+                    
+                    if (DeathTpPlus.deathconfig.get("SHOW_STREAKS").matches("true")){
+                        writeToStreak(player.getDisplayName(), killerName);
+                    }
+                    //write kill to deathlog
+                    if (DeathTpPlus.deathconfig.get("DEATH_LOGS").matches("true")) {
+                        writeToLog("kill", killerName, player.getDisplayName());
+                    }
+                }
+                if (eventAnnounce.equals(""))
+                {
+                    eventAnnounce = getEvent("UNKNOWN").replace("%n", player.getDisplayName());
+                }
+
+                eventAnnounce = plugin.convertSamloean(eventAnnounce);
+
+                if (DeathTpPlus.deathconfig.get("SHOW_DEATHNOTIFY").equals("true")) {
+                    //plugin.getServer().broadcastMessage(eventAnnounce);
+                    if (event instanceof PlayerDeathEvent) {
+                        ((PlayerDeathEvent) event).setDeathMessage(eventAnnounce);
+                    }
+
+                }
+
+                //CraftIRC
+                if (DeathTpPlus.craftircHandle != null) {
+                    DeathTpPlus.craftircHandle.sendMessageToTag(convertForIrc(eventAnnounce), DeathTpPlus.deathconfig.get("CRAFT_IRC_TAG"));
+                }
+
+                if (DeathTpPlus.deathconfig.get("DEATH_LOGS").matches("true")) {
+                    writeToLog("death", player.getDisplayName(), loghowdied);
+                }
+
+                if (DeathTpPlus.deathconfig.get("SHOW_SIGN").equals("true")) {
+                    //place sign
+                    Block signBlock = player.getWorld().getBlockAt(player.getLocation().getBlockX(),
+                            player.getLocation().getBlockY(),
+                            player.getLocation().getBlockZ());
+
+                    signBlock.setType(Material.SIGN_POST);
+
+                    BlockState state = signBlock.getState();
+
+                    if (state instanceof Sign) {
+                        String signtext;
+                        Sign sign = (Sign)state;
+                        sign.setLine(0, "[RIP]");
+                        sign.setLine(1, player.getDisplayName());
+                        sign.setLine(2, "Died by");
+                        signtext = causeOfDeath.substring(0, 1)+causeOfDeath.substring(1).toLowerCase();
+                        if (causeOfDeath.equals("PVP") || causeOfDeath.equals("FISTS") || causeOfDeath.equals("TAMED"))
+                            signtext = killerName;
+
+                        sign.setLine(3, signtext);
+                    }
+                }
+
+            }
+
+            //added compatibility for streaks if notify is off
+            else {
+                if (causeOfDeath.equals("PVP") || causeOfDeath.equals("FISTS") || causeOfDeath.equals("TAMED")) {
+                    if (DeathTpPlus.deathconfig.get("SHOW_STREAKS").matches("true"))
+                        writeToStreak(player.getDisplayName(), killerName);
+                }
+
+                if (DeathTpPlus.deathconfig.get("DEATH_LOGS").matches("true")) {
+                    writeToLog("death", player.getDisplayName(), loghowdied);
+                }
+            }
+
+
+
         }
-    }
-
-    public void lastDamageDone(Player player, EntityDamageEvent event) {
-        String lastdamage = event.getCause().name();
-        //player.sendMessage(lastdamage);
-        //checks for mob/PVP damage
-        if (event instanceof EntityDamageByEntityEvent) {
-            EntityDamageByEntityEvent mobevent = (EntityDamageByEntityEvent) event;
-            Entity attacker = mobevent.getDamager();
-            if (attacker instanceof Fireball) {
-                lastdamage = (((Fireball) attacker).getShooter().toString());
-            }
-            else if (attacker instanceof Arrow) {
-
-                lastdamage = ((Arrow) attacker).getShooter().toString();
-            }
-
-            // Todo check if duplicate
-            /*else if (attacker instanceof Player) {
-                Player pvper = (Player) attacker;
-                String usingitem = pvper.getItemInHand().getType().name();
-                if (usingitem == "AIR") {
-                    usingitem = "BARE_KNUCKLES";
-                }
-                lastdamage = "PVP:"+usingitem+":"+pvper.getName();
-            }*/
-            else if (attacker.toString().toLowerCase().matches("craftslime")) {
-                lastdamage = "SLIME";
-            }
-
-            else if (attacker instanceof Wolf) {
-                //Wolf wolf = (Wolf)attacker;
-                //TODO wolf owner logic
-                lastdamage = "WOLF";
-            }
-
-            else if (attacker instanceof Monster) {
-                Monster mob = (Monster) attacker;
-
-                if (mob instanceof PigZombie) {
-                    lastdamage = "PIGZOMBIE";
-                }
-                else if (mob instanceof Zombie) {
-                    lastdamage = "ZOMBIE";
-                }
-                else if (mob instanceof Creeper) {
-                    lastdamage = "CREEPER";
-                }
-                else if (mob instanceof CaveSpider) {
-                    lastdamage = "CAVESPIDER";
-                }
-                else if (mob instanceof Spider) {
-                    lastdamage = "SPIDER";
-                }
-                else if (mob instanceof Skeleton) {
-                    lastdamage = "SKELETON";
-                }
-                else if (mob instanceof Ghast) {
-                    lastdamage = "GHAST";
-                }
-                else if (mob instanceof Slime) {
-                    lastdamage = "SLIME";
-                }
-                else if (mob instanceof Enderman) {
-                    lastdamage = "ENDERMAN";
-                }
-                else if (mob instanceof Silverfish) {
-                    lastdamage = "SILVERFISH";
-                }
-            }
-            else if (attacker instanceof Player) {
-                Player pvper = (Player) attacker;
-                String usingitem = pvper.getItemInHand().getType().name();
-                if (usingitem == "AIR") {
-                    usingitem = "fist";
-                }
-                usingitem = usingitem.toLowerCase();
-                usingitem = usingitem.replace("_", " ");
-                lastdamage = "PVP:"+usingitem+":"+pvper.getDisplayName();
-            }
-        }
-
-        if ((beforedamage.equals("GHAST") && lastdamage.equals("BLOCK_EXPLOSION")) ||(beforedamage.equals("GHAST") && lastdamage.equals("GHAST"))) {
-            lastdamage = "GHAST";
-        }
-
-        if (!lastDamagePlayer.contains(player.getDisplayName())) {
-            lastDamagePlayer.add(player.getDisplayName());
-            lastDamageType.add(event.getCause().name());
-        }
-        else {
-            lastDamageType.set(lastDamagePlayer.indexOf(player.getDisplayName()), lastdamage);
-        }
-
-        beforedamage = lastdamage;
     }
 
     public void writeToStreak(String defender, String attacker) {
 
         //read the file
-        try {
-            String line = "";
-            ArrayList<String> filetext = new ArrayList<String>();
+        String line = "";
+        ArrayList<String> filetext = new ArrayList<String>();
 
+        String[] splittext;
+        int atkCurrentStreak = 0;
+        int defCurrentStreak = 0;
+        boolean foundDefender = false;
+        boolean foundAttacker = false;
+        boolean isNewFile = true;
+
+        try {
             //File streakFile = new File("plugins/DeathTpPlus/streak.txt");
             //File streakFile = new File(plugin.getDataFolder()+"/streak.txt");
             BufferedReader br = new BufferedReader(new FileReader(DeathTpPlus.streakFile));
-            String[] splittext;
-            int atkCurrentStreak = 0;
-            int defCurrentStreak = 0;
-            boolean foundDefender = false;
-            boolean foundAttacker = false;
-            boolean isNewFile = true;
-
+    
             while((line = br.readLine()) != null) {
                 if (line.contains(defender+":")) {
                     splittext = line.split(":");
@@ -382,34 +272,38 @@ public class DTPEntityListener extends EntityListener {
                 filetext.add(line);
                 isNewFile = false;
             }
-
+    
             br.close();
+        }
+        catch(IOException e) {
+            plugin.getLogger().severe(e.toString());
+        }
 
+        String teststreak = "";
+        String testsplit[];
 
-            String teststreak = "";
-            String testsplit[];
-
-            //Check to see if we should announce a streak
-            //Deaths
-            for (int i=0;i < DeathTpPlus.deathstreak.get("DEATH_STREAK").size();i++) {
-                teststreak = DeathTpPlus.deathstreak.get("DEATH_STREAK").get(i);
-                testsplit = teststreak.split(":");
-                if (Integer.parseInt(testsplit[0]) == -(defCurrentStreak)) {
-                    String announce = plugin.convertSamloean(testsplit[1]);
-                    plugin.getServer().broadcastMessage(announce.replace("%n", defender));
-                }
+        //Check to see if we should announce a streak
+        //Deaths
+        for (int i=0;i < DeathTpPlus.deathstreak.get("DEATH_STREAK").size();i++) {
+            teststreak = DeathTpPlus.deathstreak.get("DEATH_STREAK").get(i);
+            testsplit = teststreak.split(":");
+            if (Integer.parseInt(testsplit[0]) == -(defCurrentStreak)) {
+                String announce = plugin.convertSamloean(testsplit[1]);
+                plugin.getServer().broadcastMessage(announce.replace("%n", defender));
             }
-            //Kills
-            for (int i=0;i < DeathTpPlus.killstreak.get("KILL_STREAK").size();i++) {
-                teststreak = DeathTpPlus.killstreak.get("KILL_STREAK").get(i);
-                testsplit = teststreak.split(":");
-                if (Integer.parseInt(testsplit[0]) == atkCurrentStreak) {
-                    String announce = plugin.convertSamloean(testsplit[1]);
-                    plugin.getServer().broadcastMessage(announce.replace("%n", attacker));
-                }
+        }
+        //Kills
+        for (int i=0;i < DeathTpPlus.killstreak.get("KILL_STREAK").size();i++) {
+            teststreak = DeathTpPlus.killstreak.get("KILL_STREAK").get(i);
+            testsplit = teststreak.split(":");
+            if (Integer.parseInt(testsplit[0]) == atkCurrentStreak) {
+                String announce = plugin.convertSamloean(testsplit[1]);
+                plugin.getServer().broadcastMessage(announce.replace("%n", attacker));
             }
+        }
 
-            // Write streaks to file
+        // Write streaks to file
+        try {
             BufferedWriter out = new BufferedWriter(new FileWriter(DeathTpPlus.streakFile));
 
             for (int i = 0; i < filetext.size(); i++) {
@@ -436,8 +330,8 @@ public class DTPEntityListener extends EntityListener {
             //Close the output stream
             out.close();
         }
-        catch(IOException e) {
-            System.out.println(e);
+        catch (IOException e) {
+            plugin.getLogger().severe(e.toString());
         }
     }
 
@@ -454,7 +348,7 @@ public class DTPEntityListener extends EntityListener {
             try {
                 deathlogTempFile.createNewFile();
             } catch (IOException e) {
-                System.out.println("cannot create file "+deathlogTempFile);
+                plugin.getLogger().severe("cannot create file "+deathlogTempFile);
             }
         }
 
@@ -494,8 +388,73 @@ public class DTPEntityListener extends EntityListener {
             deathlogTempFile.renameTo(DeathTpPlus.deathlogFile);
         }
         catch(IOException e) {
-            System.out.println("Could not edit deathlog: "+e);
+            plugin.getLogger().severe("Could not edit deathlog: "+e);
         }
 
+    }
+    
+    public static CreatureType getEntityType(Entity entity)
+    {
+        if (entity instanceof CaveSpider)
+            return CreatureType.CAVE_SPIDER;
+        if (entity instanceof Chicken)
+            return CreatureType.CHICKEN;
+        if (entity instanceof Cow)
+            return CreatureType.COW;
+        if (entity instanceof Creeper)
+            return CreatureType.CREEPER;
+        if (entity instanceof Enderman)
+            return CreatureType.ENDERMAN;
+        if (entity instanceof Ghast)
+            return CreatureType.GHAST;
+        if (entity instanceof Giant)
+            return CreatureType.GIANT;
+        if (entity instanceof Pig)
+            return CreatureType.PIG;
+        if (entity instanceof PigZombie)
+            return CreatureType.PIG_ZOMBIE;
+        if (entity instanceof Sheep)
+            return CreatureType.SHEEP;
+        if (entity instanceof Skeleton)
+            return CreatureType.SKELETON;
+        if (entity instanceof Slime)
+            return CreatureType.SLIME;
+        if (entity instanceof Silverfish)
+            return CreatureType.SILVERFISH;
+        if (entity instanceof Spider)
+            return CreatureType.SPIDER;
+        if (entity instanceof Squid)
+            return CreatureType.SQUID;
+        if (entity instanceof Zombie)
+            return CreatureType.ZOMBIE;
+        if (entity instanceof Wolf)
+            return CreatureType.WOLF;
+
+        // Monster is a parent class and needs to be last
+        if (entity instanceof Monster)
+            return CreatureType.MONSTER;
+        return null;
+    }
+    
+    public static String convertForIrc(String msg)
+    {
+        String ircAnnounce;
+        ircAnnounce = msg.replace("§0", "");
+        ircAnnounce = ircAnnounce.replace("§2", "");
+        ircAnnounce = ircAnnounce.replace("§3", "");
+        ircAnnounce = ircAnnounce.replace("§4", "");
+        ircAnnounce = ircAnnounce.replace("§5", "");
+        ircAnnounce = ircAnnounce.replace("§6", "");
+        ircAnnounce = ircAnnounce.replace("§7", "");
+        ircAnnounce = ircAnnounce.replace("§8", "");
+        ircAnnounce = ircAnnounce.replace("§9", "");
+        ircAnnounce = ircAnnounce.replace("§a", "");
+        ircAnnounce = ircAnnounce.replace("§b", "");
+        ircAnnounce = ircAnnounce.replace("§c", "");
+        ircAnnounce = ircAnnounce.replace("§d", "");
+        ircAnnounce = ircAnnounce.replace("§e", "");
+        ircAnnounce = ircAnnounce.replace("§f", "");
+        
+        return ircAnnounce;
     }
 }
