@@ -98,7 +98,6 @@ public class DTPEntityListener extends EntityListener
                 causeOfDeath = "UNKNOWN";
                 murderWeapon = "unknown";
             }
-            plugin.getLogger().info("DEBUG: deathCause = " + causeOfDeath);
 
             String eventAnnounce = "";
             String fileOutput = "";
