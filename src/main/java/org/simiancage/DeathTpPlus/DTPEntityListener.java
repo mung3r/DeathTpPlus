@@ -83,6 +83,9 @@ public class DTPEntityListener extends EntityListener
                         causeOfDeath = getCreatureType(damager).toString();
                     }
                 }
+                else if (damager instanceof Projectile) {
+                    // TODO: find out why we never get damager
+                }
                 else if (damager instanceof TNTPrimed) {
                     causeOfDeath = "BLOCK_EXPLOSION";
                 }
@@ -90,7 +93,7 @@ public class DTPEntityListener extends EntityListener
                     plugin.getLogger().info("[DeathTpPlus] unknown enitity damager" + damager);
                 }
             }
-            else if (damageEvent.getCause() != null) {
+            else if (damageEvent != null) {
                 causeOfDeath = damageEvent.getCause().toString();
             }
 
