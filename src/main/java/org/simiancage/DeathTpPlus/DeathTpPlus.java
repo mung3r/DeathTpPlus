@@ -24,12 +24,23 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.simiancage.DeathTpPlus.listeners.DTPEntityListener;
+import org.simiancage.DeathTpPlus.logs.DTPDeathLog;
+import org.simiancage.DeathTpPlus.logs.DTPLocationLog;
+import org.simiancage.DeathTpPlus.logs.DTPStreakLog;
 
 //craftirc
 import com.ensifera.animosity.craftirc.CraftIRC;
 
 public class DeathTpPlus extends JavaPlugin
 {
+    private static final String CONFIG_FILE = "config.yml";
+    private static final String LOCATION_LOG_FILE = "locs.txt";
+    private static final String STREAK_LOG_FILE = "streak.txt";
+    private static final String DEATH_LOG_FILE = "deathlog.txt";
+
+    public static final File dataFolder = new File("plugins" + File.separator + "DeathTpPlus");
+    
     // damage and death listener
     private final DTPEntityListener entityListener = new DTPEntityListener(this);
 
@@ -41,15 +52,15 @@ public class DeathTpPlus extends JavaPlugin
     public static HashMap<String, List<String>> deathevents = new HashMap<String, List<String>>();
     public static HashMap<String, String> deathconfig = new HashMap<String, String>();
     public static File configFile;
-    public static File locsName;
-    public static File streakFile;
-    public static File deathlogFile;
     protected String logName = null;
     protected String pluginName = null;
     protected String pluginVersion = null;
     protected ArrayList<String> pluginAuthor = null;
     protected String pluginPath = null;
     protected boolean worldTravel = false;
+    private DTPLocationLog locationLog;
+    private DTPStreakLog streakLog;
+    private DTPDeathLog deathLog;
     FileConfiguration configuration;
 
     // Register
@@ -73,11 +84,11 @@ public class DeathTpPlus extends JavaPlugin
         logName = "[" + pluginName + "] ";
         pluginVersion = getDescription().getVersion();
         pluginAuthor = getDescription().getAuthors();
-        pluginPath = getDataFolder() + System.getProperty("file.separator");
-        configFile = new File(pluginPath + "config.yml");
-        locsName = new File(pluginPath + "locs.txt");
-        streakFile = new File(pluginPath + "streak.txt");
-        deathlogFile = new File(pluginPath + "deathlog.txt");
+        configFile = new File(dataFolder, CONFIG_FILE);
+
+        locationLog = new DTPLocationLog(plugin, LOCATION_LOG_FILE);
+        streakLog = new DTPStreakLog(plugin, STREAK_LOG_FILE);
+        deathLog = new DTPDeathLog(plugin, DEATH_LOG_FILE);
 
         // Todo write Helper Class for this
 
@@ -104,17 +115,6 @@ public class DeathTpPlus extends JavaPlugin
             }
         }
         configuration = this.getConfig();
-        if (!locsName.exists()) {
-            CreateDefaultFile(locsName);
-        }
-
-        if (!streakFile.exists()) {
-            CreateDefaultFile(streakFile);
-        }
-
-        if (!deathlogFile.exists()) {
-            CreateDefaultFile(deathlogFile);
-        }
 
         DefaultConfiguration();
         // Death Event nodes
@@ -213,17 +213,6 @@ public class DeathTpPlus extends JavaPlugin
         log.info("[DeathTpPlus] version " + pdfFile.getVersion() + " is enabled!");
     }
 
-    private void CreateDefaultFile(File file)
-    {
-        try {
-            file.createNewFile();
-        }
-        catch (IOException e) {
-            // Todo Enable Logger
-            log.warning(logName + "Cannot create file " + file.getPath() + "/" + file.getName());
-        }
-    }
-
     private void DefaultConfiguration()
     {
         configuration.addDefault("fall", "");
@@ -273,7 +262,7 @@ public class DeathTpPlus extends JavaPlugin
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
     {
-        String command = cmd.getName();
+        String command = commandLabel;
         boolean canUseCommand = false;
         boolean teleportok = true;
         boolean teleported = false;
@@ -333,70 +322,56 @@ public class DeathTpPlus extends JavaPlugin
 
                     if (teleportok) {
 
-                        try {
-                            String line = "";
-                            String teleloc = "";
-                            String[] location;
-                            FileReader fr = new FileReader(locsName);
-                            BufferedReader br = new BufferedReader(fr);
+                        String[] location;
+                        String teleloc = getLocationLog().getRecord(player.getName());
 
-                            while ((line = br.readLine()) != null) {
-                                if (line.contains(player.getName() + ":")) {
-                                    teleloc = line;
+                        if (teleloc != "") {
+                            location = teleloc.split(":");
+                            Location sendLocation = player.getLocation();
+                            double x, y, z;
+
+                            x = Double.valueOf(location[1].trim()).doubleValue();
+                            y = Double.valueOf(location[2].trim()).doubleValue();
+                            z = Double.valueOf(location[3].trim()).doubleValue();
+                            World deathWorld = this.getServer().getWorld(location[4].trim());
+                            sendLocation.setX(x);
+                            sendLocation.setY(y);
+                            sendLocation.setZ(z);
+
+                            boolean safeTele = false;
+                            int test1 = -1, test2 = -1;
+                            while (!safeTele) {
+                                test1 = player.getWorld().getBlockTypeIdAt(sendLocation);
+                                test2 = player.getWorld().getBlockTypeIdAt(sendLocation);
+                                if (test1 == 0 && test2 == 0) {
+                                    safeTele = true;
                                 }
+
+                                sendLocation.setY(sendLocation.getY() + 1);
                             }
 
-                            if (teleloc != "") {
-                                location = teleloc.split(":");
-                                Location sendLocation = player.getLocation();
-                                double x, y, z;
-
-                                x = Double.valueOf(location[1].trim()).doubleValue();
-                                y = Double.valueOf(location[2].trim()).doubleValue();
-                                z = Double.valueOf(location[3].trim()).doubleValue();
-                                World deathWorld = this.getServer().getWorld(location[4].trim());
-                                sendLocation.setX(x);
-                                sendLocation.setY(y);
-                                sendLocation.setZ(z);
-
-                                boolean safeTele = false;
-                                int test1 = -1, test2 = -1;
-                                while (!safeTele) {
-                                    test1 = player.getWorld().getBlockTypeIdAt(sendLocation);
-                                    test2 = player.getWorld().getBlockTypeIdAt(sendLocation);
-                                    if (test1 == 0 && test2 == 0) {
-                                        safeTele = true;
-                                    }
-
-                                    sendLocation.setY(sendLocation.getY() + 1);
-                                }
-
-                                if (!thisWorld.equals(deathWorld.getName())) {
-                                    if (worldTravel) {
-                                        sendLocation.setWorld(deathWorld);
-                                        player.teleport(sendLocation);
-                                        teleported = true;
-                                    }
-                                    else {
-                                        player.sendMessage("You do not have the right to travel between worlds via deathtp!");
-                                    }
-                                }
-                                else {
+                            if (!thisWorld.equals(deathWorld.getName())) {
+                                if (worldTravel) {
+                                    sendLocation.setWorld(deathWorld);
                                     player.teleport(sendLocation);
                                     teleported = true;
                                 }
+                                else {
+                                    player.sendMessage("You do not have the right to travel between worlds via deathtp!");
+                                }
                             }
                             else {
-                                player.sendMessage("You do not have a last known death location.");
-                            }
-                            if (useRegister && !teleported && economy != null) {
-                                if (economy != null)
-                                    economy.depositPlayer(player.getName(), registerCost);
-                                player.sendMessage("Giving you back " + registerCost);
+                                player.teleport(sendLocation);
+                                teleported = true;
                             }
                         }
-                        catch (IOException e) {
-
+                        else {
+                            player.sendMessage("You do not have a last known death location.");
+                        }
+                        if (useRegister && !teleported && economy != null) {
+                            if (economy != null)
+                                economy.depositPlayer(player.getName(), registerCost);
+                            player.sendMessage("Giving you back " + registerCost);
                         }
                     }
                     else {
@@ -418,7 +393,6 @@ public class DeathTpPlus extends JavaPlugin
         else if (command.equals("deaths")) {
             String playername = "";
             String cause = "";
-            String line;
             int totalnum = 0;
             String[] splittext;
             boolean foundrecord = false;
@@ -451,59 +425,51 @@ public class DeathTpPlus extends JavaPlugin
                     return false;
                 }
 
-                try {
-                    BufferedReader br = new BufferedReader(new FileReader(deathlogFile));
-                    while ((line = br.readLine()) != null) {
-                        splittext = line.split(":");
-                        // 0 = name, 1 = type, 2 = cause, 3 = number
-                        if (!cause.matches("")) {
-                            if (splittext[0].matches(playername) && splittext[1].matches("death") && splittext[2].matches(cause.toUpperCase())) {
-                                String times = "times";
-                                if (splittext[2] == "1") {
-                                    times = "time";
-                                }
-                                sender.sendMessage(playername + " has died by " + cause + " " + splittext[3] + " " + times);
-                                foundrecord = true;
+                List<String> lines = getDeathLog().getRecords(playername);
+                for (String line : lines) {
+                    splittext = line.split(":");
+                    // 0 = name, 1 = type, 2 = cause, 3 = number
+                    if (!cause.isEmpty()) {
+                        if (splittext[0].equalsIgnoreCase(playername) && splittext[1].equals("death") && splittext[2].equalsIgnoreCase(cause)) {
+                            String times = "times";
+                            if (splittext[2] == "1") {
+                                times = "time";
                             }
-                        }
-                        // total count
-                        else {
-                            if (splittext[0].matches(playername) && splittext[1].matches("death")) {
-                                totalnum = totalnum + Integer.parseInt(splittext[3]);
-                            }
+                            sender.sendMessage(playername + " has died by " + cause + " " + splittext[3] + " " + times);
+                            foundrecord = true;
                         }
                     }
-                    if (cause.matches("")) {
-                        String times = "times";
-                        if (totalnum == 1) {
-                            times = "time";
-                        }
-                        sender.sendMessage(playername + " has died " + totalnum + " " + times);
-                    }
+                    // total count
                     else {
-                        if (!foundrecord) {
-                            sender.sendMessage(playername + " has died by " + cause + " 0 times");
+                        if (splittext[0].equalsIgnoreCase(playername) && splittext[1].equals("death")) {
+                            totalnum = totalnum + Integer.parseInt(splittext[3]);
                         }
                     }
-                    return true;
                 }
-                catch (Exception e) {
-                    // Todo implement logger
-                    log.info("[DeathTpPlus] Error reading deathlog: " + deathlogFile);
+
+                if (cause.isEmpty()) {
+                    String times = "times";
+                    if (totalnum == 1) {
+                        times = "time";
+                    }
+                    sender.sendMessage(playername + " has died " + totalnum + " " + times);
                 }
+                else {
+                    if (!foundrecord) {
+                        sender.sendMessage(playername + " has died by " + cause + " 0 times");
+                    }
+                }
+                return true;
             }
 
             else {
                 return true;
             }
-
-            return false;
         }
 
         else if (command.equals("kills")) {
             String playername = "";
             String username = "";
-            String line;
             int totalnum = 0;
             String[] splittext;
             boolean foundrecord = false;
@@ -536,51 +502,43 @@ public class DeathTpPlus extends JavaPlugin
                 }
                 // File deathlogFile = new
                 // File(getDataFolder()+"/deathlog.txt");
-                try {
-                    BufferedReader br = new BufferedReader(new FileReader(deathlogFile));
-                    while ((line = br.readLine()) != null) {
-                        splittext = line.split(":");
-                        // 0 = name, 1 = type, 2 = cause, 3 = number
-                        if (!username.matches("")) {
-                            if (splittext[0].matches(playername) && splittext[1].matches("kill") && splittext[2].matches(username)) {
-                                String times = "times";
-                                if (splittext[2] == "1")
-                                    times = "time";
-                                sender.sendMessage(playername + " has killed " + username + " " + splittext[3] + " " + times);
-                                foundrecord = true;
-                            }
-                        }
-                        // total count
-                        else {
-                            if (splittext[0].matches(playername) && splittext[1].matches("kill")) {
-                                totalnum = totalnum + Integer.parseInt(splittext[3]);
-                            }
+                List<String> lines = deathLog.getRecords(playername);
+                for (String line : lines) {
+                    splittext = line.split(":");
+                    // 0 = name, 1 = type, 2 = cause, 3 = number
+                    if (!username.isEmpty()) {
+                        if (splittext[0].equalsIgnoreCase(playername) && splittext[1].equals("kill") && splittext[2].equalsIgnoreCase(username)) {
+                            String times = "times";
+                            if (splittext[2] == "1")
+                                times = "time";
+                            sender.sendMessage(playername + " has killed " + username + " " + splittext[3] + " " + times);
+                            foundrecord = true;
                         }
                     }
-                    if (username.matches("")) {
-                        String times = "times";
-                        if (totalnum == 1) {
-                            times = "time";
-                        }
-                        sender.sendMessage(playername + " has killed " + totalnum + " " + times);
-                    }
+                    // total count
                     else {
-                        if (!foundrecord) {
-                            sender.sendMessage(playername + " has killed " + username + " 0 times");
+                        if (splittext[0].equalsIgnoreCase(playername) && splittext[1].equals("kill")) {
+                            totalnum = totalnum + Integer.parseInt(splittext[3]);
                         }
                     }
-                    return true;
                 }
-                catch (Exception e) {
-                    // Todo implement logger
-                    log.info("[DeathTpPlus] Error reading deathlog: " + deathlogFile);
+                if (username.isEmpty()) {
+                    String times = "times";
+                    if (totalnum == 1) {
+                        times = "time";
+                    }
+                    sender.sendMessage(playername + " has killed " + totalnum + " " + times);
                 }
+                else {
+                    if (!foundrecord) {
+                        sender.sendMessage(playername + " has killed " + username + " 0 times");
+                    }
+                }
+                return true;
             }
             else {
                 return true;
             }
-
-            return false;
         }
 
         else if (command.equals("streak")) {
@@ -599,7 +557,7 @@ public class DeathTpPlus extends JavaPlugin
                     Player check;
                     String playername = "player";
 
-                    if (args.length > 1) {
+                    if (args.length > 0) {
                         playername = args[0];
                     }
                     else {
@@ -609,49 +567,27 @@ public class DeathTpPlus extends JavaPlugin
                         }
                     }
 
-                    List<Player> lookup = this.getServer().matchPlayer(playername);
-
-                    if (lookup.size() == 0) {
-                        sender.sendMessage(ChatColor.RED + "No matching player.");
-                        return true;
-                    }
-                    else if (lookup.size() != 1) {
-                        sender.sendMessage(ChatColor.RED + "Matched more than one player!  Be more specific!");
-                        return true;
-                    }
-                    else {
-                        check = lookup.get(0);
-
-                        try {
-                            FileReader fr = new FileReader(streakFile);
-                            BufferedReader br = new BufferedReader(fr);
-                            boolean entryfound = false;
-                            while ((line = br.readLine()) != null) {
-                                if (!line.startsWith("#")) {
-                                    splittext = line.split(":");
-                                    if (check.getName().matches(splittext[0])) {
-                                        if (Integer.parseInt(splittext[1]) < 0) {
-                                            sender.sendMessage(ChatColor.GRAY + check.getName() + "'s Current Streak: " + splittext[1].replace("-", "") + " Death(s)");
-                                        }
-                                        else {
-                                            sender.sendMessage(ChatColor.GRAY + check.getName() + "'s Current Streak: " + splittext[1] + " Kill(s)");
-                                        }
-
-                                        entryfound = true;
-                                    }
+                    boolean entryfound = false;
+                    line = getStreakLog().getRecord(playername);
+                    if (line != null) {
+                        if (!line.startsWith("#")) {
+                            splittext = line.split(":");
+                            if (playername.equalsIgnoreCase(splittext[0])) {
+                                if (Integer.parseInt(splittext[1]) < 0) {
+                                    sender.sendMessage(ChatColor.GRAY + splittext[0] + "'s Current Streak: " + splittext[1].replace("-", "") + " Death(s)");
                                 }
+                                else {
+                                    sender.sendMessage(ChatColor.GRAY + splittext[0] + "'s Current Streak: " + splittext[1] + " Kill(s)");
+                                }
+
+                                entryfound = true;
                             }
-                            if (!entryfound) {
-                                sender.sendMessage("No streak found");
-                            }
-                            br.close();
-                            return true;
-                        }
-                        catch (IOException e) {
-                            System.out.println(e);
                         }
                     }
-
+                    if (!entryfound) {
+                        sender.sendMessage("No streak found");
+                    }
+                    return true;
                 }
                 else {
                     return true;
@@ -686,6 +622,21 @@ public class DeathTpPlus extends JavaPlugin
         convert = convert.replace("&f", "§f");
 
         return convert;
+    }
+
+    public DTPLocationLog getLocationLog()
+    {
+        return locationLog;
+    }
+
+    public DTPStreakLog getStreakLog()
+    {
+        return streakLog;
+    }
+
+    public DTPDeathLog getDeathLog()
+    {
+        return deathLog;
     }
 
     public Logger getLogger()
