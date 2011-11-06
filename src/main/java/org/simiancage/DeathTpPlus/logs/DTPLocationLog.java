@@ -15,19 +15,41 @@ public class DTPLocationLog
 {
     private DeathTpPlus plugin;
     private File file;
+    private static final String LOCATION_LOG_FILE = "locs.txt";
 
-    public DTPLocationLog(DeathTpPlus plugin, String fileName)
+    public DTPLocationLog(DeathTpPlus plugin)
     {
         this.plugin = plugin;
-        file = new File(DeathTpPlus.dataFolder, fileName);
+        file = new File(DeathTpPlus.dataFolder, LOCATION_LOG_FILE);
         if (!file.exists()) {
             try {
                 file.createNewFile();
             }
             catch (IOException e) {
-                this.plugin.getLogger().severe("Failed to create " + file.getName());
+                DeathTpPlus.logger.severe("Failed to create " + file.getName());
             }
         }
+    }
+
+    public String getRecord(String playerName)
+    {
+        try {
+            String record;
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+            while ((record = bufferedReader.readLine()) != null) {
+                if (record.split(":")[0].equalsIgnoreCase(playerName)) {
+                    break;
+                }
+            }
+    
+            bufferedReader.close();
+            return record;
+        }
+        catch (Exception e) {
+            DeathTpPlus.logger.severe("Could not read " + file);
+        }
+    
+        return null;
     }
 
     public void setRecord(Player player)
@@ -73,28 +95,7 @@ public class DTPLocationLog
             out.close();
         }
         catch (IOException e) {
-            plugin.getLogger().severe(e.toString());
+            DeathTpPlus.logger.severe(e.toString());
         }
-    }
-
-    public String getRecord(String playerName)
-    {
-        try {
-            String record;
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-            while ((record = bufferedReader.readLine()) != null) {
-                if (record.split(":")[0].equalsIgnoreCase(playerName)) {
-                    break;
-                }
-            }
-
-            bufferedReader.close();
-            return record;
-        }
-        catch (Exception e) {
-            plugin.getLogger().severe("Could not read " + file);
-        }
-
-        return null;
     }
 }

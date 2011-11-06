@@ -9,24 +9,48 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.simiancage.DeathTpPlus.DeathTpPlus;
+import org.simiancage.DeathTpPlus.utils.DTPConfig;
+import org.simiancage.DeathTpPlus.utils.DTPUtils;
 
 public class DTPStreakLog
 {
     private DeathTpPlus plugin;
     private File file;
+    private static final String STREAK_LOG_FILE = "streak.txt";
 
-    public DTPStreakLog(DeathTpPlus plugin, String fileName)
+    public DTPStreakLog(DeathTpPlus plugin)
     {
         this.plugin = plugin;
-        file = new File(DeathTpPlus.dataFolder, fileName);
+        file = new File(DeathTpPlus.dataFolder, STREAK_LOG_FILE);
         if (!file.exists()) {
             try {
                 file.createNewFile();
             }
             catch (IOException e) {
-                this.plugin.getLogger().severe("Failed to create " + file.getName());
+                DeathTpPlus.logger.severe("Failed to create " + file.getName());
             }
         }
+    }
+
+    public String getRecord(String playerName)
+    {
+        try {
+            String record;
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+            while ((record = bufferedReader.readLine()) != null) {
+                if (record.split(":")[0].equalsIgnoreCase(playerName)) {
+                    break;
+                }
+            }
+    
+            bufferedReader.close();
+            return record;
+        }
+        catch (Exception e) {
+            DeathTpPlus.logger.severe("Could not read " + file);
+        }
+    
+        return null;
     }
 
     public void setRecord(String attacker, String defender)
@@ -76,7 +100,7 @@ public class DTPStreakLog
             br.close();
         }
         catch (IOException e) {
-            plugin.getLogger().severe(e.toString());
+            DeathTpPlus.logger.severe(e.toString());
         }
 
         String teststreak = "";
@@ -84,20 +108,20 @@ public class DTPStreakLog
 
         // Check to see if we should announce a streak
         // Deaths
-        for (int i = 0; i < DeathTpPlus.deathstreak.get("DEATH_STREAK").size(); i++) {
-            teststreak = DeathTpPlus.deathstreak.get("DEATH_STREAK").get(i);
+        for (int i = 0; i < DTPConfig.deathStreakMessages.size(); i++) {
+            teststreak = DTPConfig.deathStreakMessages.get(i);
             testsplit = teststreak.split(":");
             if (Integer.parseInt(testsplit[0]) == -(defCurrentStreak)) {
-                String announce = plugin.convertSamloean(testsplit[1]);
+                String announce = DTPUtils.convertColorCode(testsplit[1]);
                 plugin.getServer().broadcastMessage(announce.replace("%n", defender));
             }
         }
         // Kills
-        for (int i = 0; i < DeathTpPlus.killstreak.get("KILL_STREAK").size(); i++) {
-            teststreak = DeathTpPlus.killstreak.get("KILL_STREAK").get(i);
+        for (int i = 0; i < DTPConfig.killStreakMessages.size(); i++) {
+            teststreak = DTPConfig.killStreakMessages.get(i);
             testsplit = teststreak.split(":");
             if (Integer.parseInt(testsplit[0]) == atkCurrentStreak) {
-                String announce = plugin.convertSamloean(testsplit[1]);
+                String announce = DTPUtils.convertColorCode(testsplit[1]);
                 plugin.getServer().broadcastMessage(announce.replace("%n", attacker));
             }
         }
@@ -131,28 +155,7 @@ public class DTPStreakLog
             out.close();
         }
         catch (IOException e) {
-            plugin.getLogger().severe(e.toString());
+            DeathTpPlus.logger.severe(e.toString());
         }
-    }
-
-    public String getRecord(String playerName)
-    {
-        try {
-            String record;
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-            while ((record = bufferedReader.readLine()) != null) {
-                if (record.split(":")[0].equalsIgnoreCase(playerName)) {
-                    break;
-                }
-            }
-
-            bufferedReader.close();
-            return record;
-        }
-        catch (Exception e) {
-            plugin.getLogger().severe("Could not read " + file);
-        }
-
-        return null;
     }
 }

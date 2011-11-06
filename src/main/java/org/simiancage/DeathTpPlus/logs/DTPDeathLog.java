@@ -15,25 +15,47 @@ public class DTPDeathLog
 {
     private DeathTpPlus plugin;
     private File file;
+    private static final String DEATH_LOG_FILE = "deathlog.txt";
 
-    public DTPDeathLog(DeathTpPlus plugin, String fileName)
+    public DTPDeathLog(DeathTpPlus plugin)
     {
         this.plugin = plugin;
-        file = new File(DeathTpPlus.dataFolder, fileName);
+        file = new File(DeathTpPlus.dataFolder, DEATH_LOG_FILE);
         if (!file.exists()) {
             try {
                 file.createNewFile();
             }
             catch (IOException e) {
-                this.plugin.getLogger().severe("Failed to create " + file.getName());
+                DeathTpPlus.logger.severe("Failed to create " + file.getName());
             }
         }
     }
 
+    public List<String> getRecords(String playerName)
+    {
+        List<String> records = new ArrayList<String>();
+
+        try {
+            String record;
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+            while ((record = bufferedReader.readLine()) != null) {
+                if (record.split(":")[0].equalsIgnoreCase(playerName)) {
+                    records.add(record);
+                }
+            }
+
+            bufferedReader.close();
+        }
+        catch (Exception e) {
+            DeathTpPlus.logger.severe("Could not read " + file);
+        }
+
+        return records;
+    }
+
     public void setRecord(String playername, String type, String deathtype)
     {
-        // File deathlogFile = new File(plugin.getDataFolder()+"/deathlog.txt");
-        File deathlogTempFile = new File(plugin.getDataFolder() + System.getProperty("file.separator") + "deathtlog.tmp");
+        File deathlogTempFile = new File(DeathTpPlus.dataFolder, "deathtlog.tmp");
         String line = "";
         String[] splittext;
         String writeline = "";
@@ -45,7 +67,7 @@ public class DTPDeathLog
                 deathlogTempFile.createNewFile();
             }
             catch (IOException e) {
-                plugin.getLogger().severe("cannot create file " + deathlogTempFile);
+                DeathTpPlus.logger.severe("cannot create file " + deathlogTempFile);
             }
         }
 
@@ -85,30 +107,7 @@ public class DTPDeathLog
             deathlogTempFile.renameTo(file);
         }
         catch (IOException e) {
-            plugin.getLogger().severe("Could not edit deathlog: " + e);
+            DeathTpPlus.logger.severe("Could not edit deathlog: " + e);
         }
-
-    }
-
-    public List<String> getRecords(String playerName)
-    {
-        List<String> records = new ArrayList<String>();
-
-        try {
-            String record;
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-            while ((record = bufferedReader.readLine()) != null) {
-                if (record.split(":")[0].equalsIgnoreCase(playerName)) {
-                    records.add(record);
-                }
-            }
-            
-            bufferedReader.close();
-        }
-        catch (Exception e) {
-            plugin.getLogger().severe("Could not read " + file);
-        }
-
-        return records;
     }
 }
