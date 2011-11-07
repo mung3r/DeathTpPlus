@@ -10,12 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.simiancage.DeathTpPlus.DeathTpPlus;
+import org.simiancage.DeathTpPlus.models.DeathRecord;
+import org.simiancage.DeathTpPlus.models.DeathRecord.DeathRecordType;
 
 public class DTPDeathLog
 {
+    private static final String DEATH_LOG_FILE = "deathlog.txt";
+    private static final String DEATH_LOG_TMP = "deathlog.tmp";
+
     private DeathTpPlus plugin;
     private File file;
-    private static final String DEATH_LOG_FILE = "deathlog.txt";
 
     public DTPDeathLog(DeathTpPlus plugin)
     {
@@ -31,16 +35,17 @@ public class DTPDeathLog
         }
     }
 
-    public List<String> getRecords(String playerName)
+    public List<DeathRecord> getRecords(String playerName)
     {
-        List<String> records = new ArrayList<String>();
+        List<DeathRecord> records = new ArrayList<DeathRecord>();
 
         try {
-            String record;
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-            while ((record = bufferedReader.readLine()) != null) {
-                if (record.split(":")[0].equalsIgnoreCase(playerName)) {
-                    records.add(record);
+            String line = null;
+            while ((line = bufferedReader.readLine()) != null) {
+                DeathRecord deathRecord = new DeathRecord(line);
+                if (playerName.equalsIgnoreCase(deathRecord.getPlayerName())) {
+                    records.add(deathRecord);
                 }
             }
 
@@ -53,13 +58,9 @@ public class DTPDeathLog
         return records;
     }
 
-    public void setRecord(String playername, String type, String deathtype)
+    public void setRecord(String playername, DeathRecordType type, String eventName)
     {
-        File deathlogTempFile = new File(DeathTpPlus.dataFolder, "deathtlog.tmp");
-        String line = "";
-        String[] splittext;
-        String writeline = "";
-        int newrecord = 0;
+        File deathlogTempFile = new File(DeathTpPlus.dataFolder, DEATH_LOG_TMP);
         boolean foundrecord = false;
 
         if (!deathlogTempFile.exists()) {
@@ -72,31 +73,29 @@ public class DTPDeathLog
         }
 
         try {
-            // format name:type:mob/player:number
             PrintWriter pw = new PrintWriter(new FileWriter(deathlogTempFile));
             BufferedReader br = new BufferedReader(new FileReader(file));
 
+            String line = null;
             while ((line = br.readLine()) != null) {
-                splittext = line.split(":");
-                writeline = line;
-                if (splittext[0].matches(playername)) {
-                    if (splittext[1].matches(type)) {
-                        if (splittext[2].matches(deathtype)) {
-                            newrecord = Integer.parseInt(splittext[3]);
-                            newrecord++;
-                            writeline = playername + ":" + type + ":" + deathtype + ":" + newrecord;
-                            foundrecord = true;
-                        }
-                    }
+                DeathRecord deathRecord = new DeathRecord(line);
+                if (playername.equalsIgnoreCase(deathRecord.getPlayerName()) && type.equals(deathRecord.getType()) && eventName.equalsIgnoreCase(deathRecord.getEventName())) {
+                    deathRecord.setCount(deathRecord.getCount() + 1);
+                    foundrecord = true;
                 }
 
-                pw.println(writeline);
+                pw.println(deathRecord.toString());
                 pw.flush();
             }
 
             if (!foundrecord) {
-                writeline = playername + ":" + type + ":" + deathtype + ":1";
-                pw.println(writeline);
+                DeathRecord deathRecord = new DeathRecord();
+                deathRecord.setPlayerName(playername);
+                deathRecord.setType(type);
+                deathRecord.setEventName(eventName);
+                deathRecord.setCount(1);
+
+                pw.println(deathRecord.toString());
                 pw.flush();
             }
 

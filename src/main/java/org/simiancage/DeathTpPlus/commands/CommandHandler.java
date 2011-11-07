@@ -16,13 +16,13 @@ public class CommandHandler
         commands.put("kills", new KillsCommand());
         commands.put("streak", new StreakCommand());
     }
-    
+
     public Boolean dispatch(CommandSender sender, String command, String[] args)
     {
         if (commands.containsKey(command)) {
             return commands.get(command).execute(sender, args);
         }
-        
+
         return false;
     }
 }

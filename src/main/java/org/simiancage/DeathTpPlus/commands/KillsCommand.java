@@ -5,6 +5,8 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
+import org.simiancage.DeathTpPlus.models.DeathRecord;
+import org.simiancage.DeathTpPlus.models.DeathRecord.DeathRecordType;
 
 public class KillsCommand implements Command
 {
@@ -15,7 +17,6 @@ public class KillsCommand implements Command
         String playername = "";
         String username = "";
         int totalnum = 0;
-        String[] splittext;
         boolean foundrecord = false;
 
         if (sender instanceof Player) {
@@ -46,23 +47,19 @@ public class KillsCommand implements Command
             }
             // File deathlogFile = new
             // File(getDataFolder()+"/deathlog.txt");
-            List<String> lines = DeathTpPlus.deathLog.getRecords(playername);
-            for (String line : lines) {
-                splittext = line.split(":");
-                // 0 = name, 1 = type, 2 = cause, 3 = number
+            List<DeathRecord> records = DeathTpPlus.deathLog.getRecords(playername);
+            for (DeathRecord record : records) {
                 if (!username.isEmpty()) {
-                    if (splittext[0].equalsIgnoreCase(playername) && splittext[1].equals("kill") && splittext[2].equalsIgnoreCase(username)) {
-                        String times = "times";
-                        if (splittext[2] == "1")
-                            times = "time";
-                        sender.sendMessage(playername + " has killed " + username + " " + splittext[3] + " " + times);
+                    if (record.getPlayerName().equalsIgnoreCase(playername) && record.getType().equals(DeathRecordType.kill) && record.getEventName().equalsIgnoreCase(username)) {
+                        String times = record.getCount() == 1 ? "time" : "times";
+                        sender.sendMessage(playername + " has killed " + username + " " + record.getCount() + " " + times);
                         foundrecord = true;
                     }
                 }
                 // total count
                 else {
-                    if (splittext[0].equalsIgnoreCase(playername) && splittext[1].equals("kill")) {
-                        totalnum = totalnum + Integer.parseInt(splittext[3]);
+                    if (record.getPlayerName().equalsIgnoreCase(playername) && record.getType().equals(DeathRecordType.kill)) {
+                        totalnum = totalnum + record.getCount();
                     }
                 }
             }

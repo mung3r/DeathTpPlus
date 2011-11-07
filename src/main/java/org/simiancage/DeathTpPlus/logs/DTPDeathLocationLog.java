@@ -7,17 +7,19 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.entity.Player;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
+import org.simiancage.DeathTpPlus.models.DeathLocation;
 
-public class DTPLocationLog
+public class DTPDeathLocationLog
 {
     private DeathTpPlus plugin;
     private File file;
     private static final String LOCATION_LOG_FILE = "locs.txt";
 
-    public DTPLocationLog(DeathTpPlus plugin)
+    public DTPDeathLocationLog(DeathTpPlus plugin)
     {
         this.plugin = plugin;
         file = new File(DeathTpPlus.dataFolder, LOCATION_LOG_FILE);
@@ -31,66 +33,68 @@ public class DTPLocationLog
         }
     }
 
-    public String getRecord(String playerName)
+    public DeathLocation getRecord(String playerName)
     {
+        DeathLocation deathLocation = null;
+
         try {
-            String record;
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-            while ((record = bufferedReader.readLine()) != null) {
-                if (record.split(":")[0].equalsIgnoreCase(playerName)) {
-                    break;
+            String line = null;
+
+            while ((line = bufferedReader.readLine()) != null) {
+                deathLocation = new DeathLocation(line);
+                if (playerName.equalsIgnoreCase(deathLocation.getPlayerName())) {
+                    return deathLocation;
                 }
             }
-    
+
             bufferedReader.close();
-            return record;
         }
         catch (Exception e) {
             DeathTpPlus.logger.severe("Could not read " + file);
         }
-    
-        return null;
+
+        return deathLocation;
     }
 
     public void setRecord(Player player)
     {
-        // text to write to file
-        String line = "";
-        ArrayList<String> filetext = new ArrayList<String>();
-        boolean readCheck = false;
+        List<DeathLocation> deathLocations = new ArrayList<DeathLocation>();
         boolean newPlayerDeath = true;
-        String fileOutput = player.getName() + ":" + player.getLocation().getX() + ":" + player.getLocation().getY() + ":" + player.getLocation().getZ() + ":" + player.getWorld().getName().toString();
+        DeathLocation newLocation = new DeathLocation();
+        newLocation.setPlayerName(player.getName());
+        newLocation.setLocation(player.getLocation());
+        newLocation.setWorldName(player.getWorld().getName());
+
         try {
             FileReader fr = new FileReader(file);
             BufferedReader br = new BufferedReader(fr);
 
+            String line = null;
             while ((line = br.readLine()) != null) {
-                if (line.contains(player.getName() + ":")) {
-                    line = fileOutput;
+                DeathLocation deathLocation = new DeathLocation(line);
+                if (player.getName().equalsIgnoreCase(deathLocation.getPlayerName())) {
+                    deathLocations.add(newLocation);
                     newPlayerDeath = false;
                 }
-                filetext.add(line);
-                readCheck = true;
+                else {
+                    deathLocations.add(deathLocation);
+                }
+            }
+
+            if (newPlayerDeath) {
+                deathLocations.add(newLocation);
             }
 
             br.close();
 
             BufferedWriter out = new BufferedWriter(new FileWriter(file));
 
-            for (int i = 0; i < filetext.size(); i++) {
-                out.write(filetext.get(i));
+            for (DeathLocation deathLocation : deathLocations) {
+                out.write(deathLocation.toString());
                 out.newLine();
             }
 
-            if (!readCheck) {
-                out.write(fileOutput);
-                out.newLine();
-            }
-
-            if (newPlayerDeath && readCheck) {
-                out.write(fileOutput);
-                out.newLine();
-            }
             // Close the output stream
             out.close();
         }

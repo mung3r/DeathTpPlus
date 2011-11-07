@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
+import org.simiancage.DeathTpPlus.models.DeathLocation;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
 import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigType;
 
@@ -74,18 +75,16 @@ public class DeathTpCommand implements Command
 
                 if (teleportok) {
 
-                    String[] location;
-                    String teleloc = DeathTpPlus.lastLocationLog.getRecord(player.getName());
+                    DeathLocation teleloc = DeathTpPlus.deathLocationLog.getRecord(player.getName());
 
-                    if (teleloc != "") {
-                        location = teleloc.split(":");
+                    if (teleloc != null) {
                         Location sendLocation = player.getLocation();
                         double x, y, z;
 
-                        x = Double.valueOf(location[1].trim()).doubleValue();
-                        y = Double.valueOf(location[2].trim()).doubleValue();
-                        z = Double.valueOf(location[3].trim()).doubleValue();
-                        World deathWorld = player.getServer().getWorld(location[4].trim());
+                        x = teleloc.getLocation().getX();
+                        y = teleloc.getLocation().getY();
+                        z = teleloc.getLocation().getZ();
+                        World deathWorld = player.getServer().getWorld(teleloc.getWorldName());
                         sendLocation.setX(x);
                         sendLocation.setY(y);
                         sendLocation.setZ(z);

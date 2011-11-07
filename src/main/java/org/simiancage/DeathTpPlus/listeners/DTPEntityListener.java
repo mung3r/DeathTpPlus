@@ -13,6 +13,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityListener;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
+import org.simiancage.DeathTpPlus.models.DeathRecord.DeathRecordType;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
 import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigType;
 import org.simiancage.DeathTpPlus.utils.DTPConfig.DeathEventType;
@@ -89,7 +90,7 @@ public class DTPEntityListener extends EntityListener
         String loghowdied = "";
 
         if (DTPConfig.config.get(ConfigType.ALLOW_DEATHTP).equals("true")) {
-            DeathTpPlus.lastLocationLog.setRecord(player);
+            DeathTpPlus.deathLocationLog.setRecord(player);
         }
 
         if (DTPConfig.config.get(ConfigType.SHOW_DEATHNOTIFY).equals("true") || DTPConfig.config.get(ConfigType.SHOW_STREAKS).equals("true") || DTPConfig.config.get(ConfigType.ALLOW_DEATHLOG).equals("true")) {
@@ -99,7 +100,7 @@ public class DTPEntityListener extends EntityListener
             // eventAnnounce
             eventAnnounce = getDeathMessage(causeOfDeath).replace("%n", player.getDisplayName());
 
-            if (causeOfDeath.equals("PVP") || causeOfDeath.equals("FISTS") || causeOfDeath.equals("TAMED")) {
+            if (causeOfDeath.equals(DeathEventType.PVP) || causeOfDeath.equals(DeathEventType.PVP_FISTS) || causeOfDeath.equals(DeathEventType.PVP_TAMED)) {
                 loghowdied = killerName;
                 eventAnnounce = eventAnnounce.replace("%i", murderWeapon).replace("%a", killerName);
 
@@ -108,7 +109,7 @@ public class DTPEntityListener extends EntityListener
                 }
                 // write kill to death log
                 if (DTPConfig.config.get(ConfigType.ALLOW_DEATHLOG).matches("true")) {
-                    DeathTpPlus.deathLog.setRecord(killerName, "kill", player.getDisplayName());
+                    DeathTpPlus.deathLog.setRecord(killerName, DeathRecordType.kill, player.getDisplayName());
                 }
             }
             if (eventAnnounce.equals("")) {
@@ -131,7 +132,7 @@ public class DTPEntityListener extends EntityListener
             }
 
             if (DTPConfig.config.get(ConfigType.ALLOW_DEATHLOG).matches("true")) {
-                DeathTpPlus.deathLog.setRecord(player.getDisplayName(), "death", loghowdied);
+                DeathTpPlus.deathLog.setRecord(player.getDisplayName(), DeathRecordType.death, loghowdied);
             }
 
             if (DTPConfig.config.get(ConfigType.SHOW_SIGN).equals("true")) {
@@ -149,7 +150,7 @@ public class DTPEntityListener extends EntityListener
                     sign.setLine(1, player.getDisplayName());
                     sign.setLine(2, "Died by");
                     signtext = causeOfDeath.toString().substring(0, 1) + causeOfDeath.toString().substring(1).toLowerCase();
-                    if (causeOfDeath.equals("PVP") || causeOfDeath.equals("FISTS") || causeOfDeath.equals("TAMED"))
+                    if (causeOfDeath.equals(DeathEventType.PVP) || causeOfDeath.equals(DeathEventType.PVP_FISTS) || causeOfDeath.equals(DeathEventType.PVP_TAMED))
                         signtext = killerName;
 
                     sign.setLine(3, signtext);
@@ -160,13 +161,13 @@ public class DTPEntityListener extends EntityListener
 
         // added compatibility for streaks if notify is off
         else {
-            if (causeOfDeath.equals("PVP") || causeOfDeath.equals("FISTS") || causeOfDeath.equals("TAMED")) {
+            if (causeOfDeath.equals(DeathEventType.PVP) || causeOfDeath.equals(DeathEventType.PVP_FISTS) || causeOfDeath.equals(DeathEventType.PVP_TAMED)) {
                 if (DTPConfig.config.get(ConfigType.SHOW_STREAKS).matches("true"))
                     DeathTpPlus.streakLog.setRecord(killerName, player.getDisplayName());
             }
 
             if (DTPConfig.config.get(ConfigType.ALLOW_DEATHLOG).matches("true")) {
-                DeathTpPlus.deathLog.setRecord(player.getDisplayName(), "death", loghowdied);
+                DeathTpPlus.deathLog.setRecord(player.getDisplayName(), DeathRecordType.death, loghowdied);
             }
         }
 

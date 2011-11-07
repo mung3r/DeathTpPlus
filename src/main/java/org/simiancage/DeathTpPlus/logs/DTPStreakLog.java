@@ -7,8 +7,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.simiancage.DeathTpPlus.DeathTpPlus;
+import org.simiancage.DeathTpPlus.models.Streak;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
 import org.simiancage.DeathTpPlus.utils.DTPUtils;
 
@@ -32,75 +34,83 @@ public class DTPStreakLog
         }
     }
 
-    public String getRecord(String playerName)
+    public Streak getRecord(String playerName)
     {
+        Streak streak = null;
+
         try {
-            String record;
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-            while ((record = bufferedReader.readLine()) != null) {
-                if (record.split(":")[0].equalsIgnoreCase(playerName)) {
-                    break;
+
+            String line = null;
+            while ((line = bufferedReader.readLine()) != null) {
+                streak = new Streak(line);
+                if (playerName.equalsIgnoreCase(streak.getPlayerName())) {
+                    return streak;
                 }
             }
-    
+
             bufferedReader.close();
-            return record;
         }
         catch (Exception e) {
             DeathTpPlus.logger.severe("Could not read " + file);
         }
-    
-        return null;
+
+        return streak;
     }
 
     public void setRecord(String attacker, String defender)
     {
 
         // read the file
-        String line = "";
-        ArrayList<String> filetext = new ArrayList<String>();
+        List<Streak> streakList = new ArrayList<Streak>();
 
-        String[] splittext;
         int atkCurrentStreak = 0;
         int defCurrentStreak = 0;
         boolean foundDefender = false;
         boolean foundAttacker = false;
-        boolean isNewFile = true;
 
         try {
-            // File streakFile = new File("plugins/DeathTpPlus/streak.txt");
-            // File streakFile = new File(plugin.getDataFolder()+"/streak.txt");
             BufferedReader br = new BufferedReader(new FileReader(file));
 
+            String line = null;
             while ((line = br.readLine()) != null) {
-                if (line.contains(defender + ":")) {
-                    splittext = line.split(":");
-                    defCurrentStreak = Integer.parseInt(splittext[1].trim());
-                    if (defCurrentStreak > 0) {
-                        defCurrentStreak = 0;
+                Streak streak = new Streak(line);
+                if (defender.equalsIgnoreCase(streak.getPlayerName())) {
+                    defCurrentStreak = streak.getCount();
+                    if (streak.getCount() > 0) {
+                        streak.setCount(0);
                     }
-                    defCurrentStreak--;
-                    line = defender + ":" + Integer.toString(defCurrentStreak);
+                    streak.setCount(streak.getCount() - 1);
                     foundDefender = true;
                 }
-                if (line.contains(attacker + ":")) {
-                    splittext = line.split(":");
-                    atkCurrentStreak = Integer.parseInt(splittext[1].trim());
-                    if (atkCurrentStreak < 0) {
-                        atkCurrentStreak = 0;
+                if (attacker.equalsIgnoreCase(streak.getPlayerName())) {
+                    if (streak.getCount() < 0) {
+                        streak.setCount(0);
                     }
-                    atkCurrentStreak++;
-                    line = attacker + ":" + Integer.toString(atkCurrentStreak);
+                    streak.setCount(streak.getCount() + 1);
                     foundAttacker = true;
                 }
-                filetext.add(line);
-                isNewFile = false;
+                streakList.add(streak);
             }
 
             br.close();
         }
         catch (IOException e) {
             DeathTpPlus.logger.severe(e.toString());
+        }
+
+        if (!foundAttacker) {
+            Streak streak = new Streak();
+            streak.setPlayerName(attacker);
+            streak.setCount(1);
+            streakList.add(streak);
+        }
+
+        if (!foundDefender) {
+            Streak streak = new Streak();
+            streak.setPlayerName(defender);
+            streak.setCount(-1);
+            streakList.add(streak);
         }
 
         String teststreak = "";
@@ -128,31 +138,14 @@ public class DTPStreakLog
 
         // Write streaks to file
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(file));
+            BufferedWriter logFile = new BufferedWriter(new FileWriter(file));
 
-            for (int i = 0; i < filetext.size(); i++) {
-                out.write(filetext.get(i));
-                out.newLine();
+            for (Streak streak : streakList) {
+                logFile.write(streak.toString());
+                logFile.newLine();
             }
 
-            if (isNewFile) {
-                out.write(attacker + ":" + "1");
-                out.newLine();
-                out.write(defender + ":" + "-1");
-                out.newLine();
-            }
-
-            if (!foundDefender && !isNewFile) {
-                out.write(defender + ":" + "-1");
-                out.newLine();
-            }
-
-            if (!foundAttacker && !isNewFile) {
-                out.write(attacker + ":" + "1");
-                out.newLine();
-            }
-            // Close the output stream
-            out.close();
+            logFile.close();
         }
         catch (IOException e) {
             DeathTpPlus.logger.severe(e.toString());

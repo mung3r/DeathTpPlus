@@ -15,7 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.simiancage.DeathTpPlus.commands.CommandHandler;
 import org.simiancage.DeathTpPlus.listeners.DTPEntityListener;
 import org.simiancage.DeathTpPlus.logs.DTPDeathLog;
-import org.simiancage.DeathTpPlus.logs.DTPLocationLog;
+import org.simiancage.DeathTpPlus.logs.DTPDeathLocationLog;
 import org.simiancage.DeathTpPlus.logs.DTPStreakLog;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
 import org.simiancage.DeathTpPlus.utils.DTPLogger;
@@ -33,7 +33,7 @@ public class DeathTpPlus extends JavaPlugin
     // plugin variables
     public static DTPLogger logger;
     public static DTPConfig config;
-    public static DTPLocationLog lastLocationLog;
+    public static DTPDeathLocationLog deathLocationLog;
     public static DTPStreakLog streakLog;
     public static DTPDeathLog deathLog;
     private CommandHandler commandHandler;
@@ -55,10 +55,10 @@ public class DeathTpPlus extends JavaPlugin
     {
         logger = new DTPLogger(this);
         config = new DTPConfig(this);
-        lastLocationLog = new DTPLocationLog(this);
+        deathLocationLog = new DTPDeathLocationLog(this);
         streakLog = new DTPStreakLog(this);
         deathLog = new DTPDeathLog(this);
-        commandHandler = new CommandHandler();        
+        commandHandler = new CommandHandler();
 
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
 

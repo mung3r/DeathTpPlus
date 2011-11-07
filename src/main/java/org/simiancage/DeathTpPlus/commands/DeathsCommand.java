@@ -5,6 +5,8 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
+import org.simiancage.DeathTpPlus.models.DeathRecord;
+import org.simiancage.DeathTpPlus.models.DeathRecord.DeathRecordType;
 
 public class DeathsCommand implements Command
 {
@@ -15,7 +17,6 @@ public class DeathsCommand implements Command
         String playername = "";
         String cause = "";
         int totalnum = 0;
-        String[] splittext;
         boolean foundrecord = false;
 
         if (sender instanceof Player) {
@@ -46,24 +47,19 @@ public class DeathsCommand implements Command
                 return false;
             }
 
-            List<String> lines = DeathTpPlus.deathLog.getRecords(playername);
-            for (String line : lines) {
-                splittext = line.split(":");
-                // 0 = name, 1 = type, 2 = cause, 3 = number
+            List<DeathRecord> records = DeathTpPlus.deathLog.getRecords(playername);
+            for (DeathRecord record : records) {
                 if (!cause.isEmpty()) {
-                    if (splittext[0].equalsIgnoreCase(playername) && splittext[1].equals("death") && splittext[2].equalsIgnoreCase(cause)) {
-                        String times = "times";
-                        if (splittext[2] == "1") {
-                            times = "time";
-                        }
-                        sender.sendMessage(playername + " has died by " + cause + " " + splittext[3] + " " + times);
+                    if (record.getPlayerName().equalsIgnoreCase(playername) && record.getType().equals(DeathRecordType.death) && record.getEventName().equalsIgnoreCase(cause)) {
+                        String times = record.getCount() == 1 ? "time" : "times";
+                        sender.sendMessage(playername + " has died by " + cause + " " + record.getCount() + " " + times);
                         foundrecord = true;
                     }
                 }
                 // total count
                 else {
-                    if (splittext[0].equalsIgnoreCase(playername) && splittext[1].equals("death")) {
-                        totalnum = totalnum + Integer.parseInt(splittext[3]);
+                    if (record.getPlayerName().equalsIgnoreCase(playername) && record.getType().equals(DeathRecordType.death)) {
+                        totalnum = totalnum + record.getCount();
                     }
                 }
             }
