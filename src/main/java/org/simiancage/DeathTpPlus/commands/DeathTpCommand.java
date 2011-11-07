@@ -28,8 +28,8 @@ public class DeathTpCommand implements Command
             }
             double registerCost = Double.valueOf(DTPConfig.config.get(ConfigType.DEATHTP_COST).trim()).doubleValue();
 
-            if (DeathTpPlus.permission.has(player, "deathtpplus.deathtp")) {
-                canUseCommand = true;
+            if (DeathTpPlus.permission != null) {
+                canUseCommand = DeathTpPlus.permission.has(player, "deathtpplus.deathtp");
             }
             else {
                 canUseCommand = DTPConfig.config.get(ConfigType.ALLOW_DEATHTP).equals("true");
@@ -134,7 +134,6 @@ public class DeathTpCommand implements Command
 
             return true;
         }
-
         else {
             DeathTpPlus.logger.info("This is only a player command.");
             return true;
