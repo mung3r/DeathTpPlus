@@ -7,7 +7,6 @@ import org.simiancage.DeathTpPlus.DeathTpPlus;
 import org.simiancage.DeathTpPlus.models.Streak;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
 import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigFlagType;
-import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigValueType;
 
 public class StreakCommand implements Command
 {
