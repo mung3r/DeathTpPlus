@@ -9,7 +9,8 @@ import org.bukkit.inventory.ItemStack;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
 import org.simiancage.DeathTpPlus.models.DeathLocation;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
-import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigType;
+import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigFlagType;
+import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigValueType;
 
 public class DeathTpCommand implements Command
 {
@@ -24,23 +25,26 @@ public class DeathTpCommand implements Command
         if (sender instanceof Player) {
             Player player = (Player) sender;
             String thisWorld = player.getWorld().getName().toString();
-            if (DeathTpPlus.permission.has(player, "deathtpplus.worldtravel") && DTPConfig.config.get(ConfigType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("permissions")) {
+            if (DTPConfig.configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("permissions")) {
+                worldTravel = DeathTpPlus.permission.has(player, "deathtpplus.worldtravel");
+            }
+            else if (DTPConfig.configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("yes")) {
                 worldTravel = true;
             }
-            double registerCost = Double.valueOf(DTPConfig.config.get(ConfigType.DEATHTP_COST).trim()).doubleValue();
+            double registerCost = Double.valueOf(DTPConfig.configValues.get(ConfigValueType.DEATHTP_COST).trim()).doubleValue();
 
             if (DeathTpPlus.permission != null) {
                 canUseCommand = DeathTpPlus.permission.has(player, "deathtpplus.deathtp");
             }
             else {
-                canUseCommand = DTPConfig.config.get(ConfigType.ALLOW_DEATHTP).equals("true");
+                canUseCommand = DTPConfig.configFlags.get(ConfigFlagType.ALLOW_DEATHTP);
             }
 
             if (canUseCommand) {
                 // costs item in inventory
-                if (!DTPConfig.config.get(ConfigType.CHARGE_ITEM).equals("0")) {
-                    if (player.getItemInHand().getType().getId() != Integer.parseInt(DTPConfig.config.get(ConfigType.CHARGE_ITEM))) {
-                        player.sendMessage("You must be holding a " + Material.getMaterial(Integer.parseInt(DTPConfig.config.get(ConfigType.CHARGE_ITEM))).toString() + " to teleport.");
+                if (!DTPConfig.configValues.get(ConfigValueType.CHARGE_ITEM).equals("0")) {
+                    if (player.getItemInHand().getType().getId() != Integer.parseInt(DTPConfig.configValues.get(ConfigValueType.CHARGE_ITEM))) {
+                        player.sendMessage("You must be holding a " + Material.getMaterial(Integer.parseInt(DTPConfig.configValues.get(ConfigValueType.CHARGE_ITEM))).toString() + " to teleport.");
                         teleportok = false;
                     }
                     else {

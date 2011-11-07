@@ -6,7 +6,8 @@ import org.bukkit.entity.Player;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
 import org.simiancage.DeathTpPlus.models.Streak;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
-import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigType;
+import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigFlagType;
+import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigValueType;
 
 public class StreakCommand implements Command
 {
@@ -20,7 +21,7 @@ public class StreakCommand implements Command
             canUseCommand = DeathTpPlus.permission.playerHas(player, "deathtpplus.streak");
         }
 
-        if (canUseCommand && DTPConfig.config.get(ConfigType.SHOW_STREAKS).equals("true")) {
+        if (canUseCommand && DTPConfig.configFlags.get(ConfigFlagType.SHOW_STREAKS)) {
             Player check;
             String playername = "player";
 

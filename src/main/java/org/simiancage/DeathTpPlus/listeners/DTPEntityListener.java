@@ -15,7 +15,8 @@ import org.bukkit.event.entity.EntityListener;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
 import org.simiancage.DeathTpPlus.models.DeathRecord.DeathRecordType;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
-import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigType;
+import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigFlagType;
+import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigValueType;
 import org.simiancage.DeathTpPlus.utils.DTPConfig.DeathEventType;
 import org.simiancage.DeathTpPlus.utils.DTPUtils;
 
@@ -89,11 +90,11 @@ public class DTPEntityListener extends EntityListener
         String eventAnnounce = "";
         String loghowdied = "";
 
-        if (DTPConfig.config.get(ConfigType.ALLOW_DEATHTP).equals("true")) {
+        if (DTPConfig.configFlags.get(ConfigFlagType.ALLOW_DEATHTP)) {
             DeathTpPlus.deathLocationLog.setRecord(player);
         }
 
-        if (DTPConfig.config.get(ConfigType.SHOW_DEATHNOTIFY).equals("true") || DTPConfig.config.get(ConfigType.SHOW_STREAKS).equals("true") || DTPConfig.config.get(ConfigType.ALLOW_DEATHLOG).equals("true")) {
+        if (DTPConfig.configFlags.get(ConfigFlagType.SHOW_DEATHNOTIFY) || DTPConfig.configFlags.get(ConfigFlagType.SHOW_STREAKS) || DTPConfig.configFlags.get(ConfigFlagType.ALLOW_DEATHLOG)) {
 
             loghowdied = causeOfDeath.toString();
             // TODO: change into case statement and create methods for
@@ -104,21 +105,21 @@ public class DTPEntityListener extends EntityListener
                 loghowdied = killerName;
                 eventAnnounce = eventAnnounce.replace("%i", murderWeapon).replace("%a", killerName);
 
-                if (DTPConfig.config.get(ConfigType.SHOW_STREAKS).matches("true")) {
+                if (DTPConfig.configFlags.get(ConfigFlagType.SHOW_STREAKS)) {
                     DeathTpPlus.streakLog.setRecord(killerName, player.getDisplayName());
                 }
                 // write kill to death log
-                if (DTPConfig.config.get(ConfigType.ALLOW_DEATHLOG).matches("true")) {
+                if (DTPConfig.configFlags.get(ConfigFlagType.ALLOW_DEATHLOG)) {
                     DeathTpPlus.deathLog.setRecord(killerName, DeathRecordType.kill, player.getDisplayName());
                 }
             }
-            if (eventAnnounce.equals("")) {
+            if (eventAnnounce.isEmpty()) {
                 eventAnnounce = getDeathMessage(DeathEventType.UNKNOWN).replace("%n", player.getDisplayName());
             }
 
             eventAnnounce = DTPUtils.convertColorCode(eventAnnounce);
 
-            if (DTPConfig.config.get(ConfigType.SHOW_DEATHNOTIFY).equals("true")) {
+            if (DTPConfig.configFlags.get(ConfigFlagType.SHOW_DEATHNOTIFY)) {
                 // plugin.getServer().broadcastMessage(eventAnnounce);
                 if (event instanceof PlayerDeathEvent) {
                     ((PlayerDeathEvent) event).setDeathMessage(eventAnnounce);
@@ -128,14 +129,14 @@ public class DTPEntityListener extends EntityListener
 
             // CraftIRC
             if (DeathTpPlus.craftIRCHandle != null) {
-                DeathTpPlus.craftIRCHandle.sendMessageToTag(DTPUtils.removeColorCode(eventAnnounce), DTPConfig.config.get(ConfigType.DEATHTP_TAG));
+                DeathTpPlus.craftIRCHandle.sendMessageToTag(DTPUtils.removeColorCode(eventAnnounce), DTPConfig.configValues.get(ConfigValueType.DEATHTP_TAG));
             }
 
-            if (DTPConfig.config.get(ConfigType.ALLOW_DEATHLOG).matches("true")) {
+            if (DTPConfig.configFlags.get(ConfigFlagType.ALLOW_DEATHLOG)) {
                 DeathTpPlus.deathLog.setRecord(player.getDisplayName(), DeathRecordType.death, loghowdied);
             }
 
-            if (DTPConfig.config.get(ConfigType.SHOW_SIGN).equals("true")) {
+            if (DTPConfig.configFlags.get(ConfigFlagType.SHOW_SIGN)) {
                 // place sign
                 Block signBlock = player.getWorld().getBlockAt(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
 
@@ -162,11 +163,11 @@ public class DTPEntityListener extends EntityListener
         // added compatibility for streaks if notify is off
         else {
             if (causeOfDeath.equals(DeathEventType.PVP) || causeOfDeath.equals(DeathEventType.PVP_FISTS) || causeOfDeath.equals(DeathEventType.PVP_TAMED)) {
-                if (DTPConfig.config.get(ConfigType.SHOW_STREAKS).matches("true"))
+                if (DTPConfig.configFlags.get(ConfigFlagType.SHOW_STREAKS))
                     DeathTpPlus.streakLog.setRecord(killerName, player.getDisplayName());
             }
 
-            if (DTPConfig.config.get(ConfigType.ALLOW_DEATHLOG).matches("true")) {
+            if (DTPConfig.configFlags.get(ConfigFlagType.ALLOW_DEATHLOG)) {
                 DeathTpPlus.deathLog.setRecord(player.getDisplayName(), DeathRecordType.death, loghowdied);
             }
         }

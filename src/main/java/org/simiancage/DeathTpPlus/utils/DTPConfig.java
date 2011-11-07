@@ -16,12 +16,17 @@ public class DTPConfig
         BLOCK_EXPLOSION, CAVE_SPIDER, CONTACT, CREEPER, DROWNING, ENDERMAN, FALL, FIRE, FIRE_TICK, GHAST, GIANT, LAVA, LIGHTNING, MONSTER, PIG_ZOMBIE, PVP, PVP_FISTS, PVP_TAMED, SILVERFISH, SKELETON, SLIME, SPIDER, STARVATION, SUFFOCATION, SUICIDE, UNKNOWN, VOID, WOLF, ZOMBIE
     };
 
-    public static enum ConfigType {
-        SHOW_DEATHNOTIFY, ALLOW_DEATHTP, SHOW_STREAKS, CHARGE_ITEM, SHOW_SIGN, DEATHTP_COST, DEATHTP_TAG, ALLOW_DEATHLOG, ALLOW_WORLDTRAVEL
+    public static enum ConfigValueType {
+        CHARGE_ITEM, DEATHTP_COST, DEATHTP_TAG, ALLOW_WORLDTRAVEL
     };
 
+    public static enum ConfigFlagType {
+        SHOW_DEATHNOTIFY, ALLOW_DEATHTP, SHOW_STREAKS, SHOW_SIGN, ALLOW_DEATHLOG,
+    }
+
     public static HashMap<DeathEventType, List<String>> deathMessages = new HashMap<DeathEventType, List<String>>();
-    public static HashMap<ConfigType, String> config = new HashMap<ConfigType, String>();
+    public static HashMap<ConfigValueType, String> configValues = new HashMap<ConfigValueType, String>();
+    public static HashMap<ConfigFlagType, Boolean> configFlags = new HashMap<ConfigFlagType, Boolean>();
     public static List<String> deathStreakMessages;
     public static List<String> killStreakMessages;
     public static boolean worldTravel = false;
@@ -47,8 +52,12 @@ public class DTPConfig
         }
 
         // Configuration nodes
-        for (ConfigType configNode : ConfigType.values()) {
-            config.put(configNode, configuration.getString(configNode.toString().toLowerCase().replace("_", "-"), ""));
+        for (ConfigValueType configNode : ConfigValueType.values()) {
+            configValues.put(configNode, configuration.getString(configNode.toString().toLowerCase().replace("_", "-"), ""));
+        }
+
+        for (ConfigFlagType configNode : ConfigFlagType.values()) {
+            configFlags.put(configNode, new Boolean(configuration.getString(configNode.toString().toLowerCase().replace("_", "-"), "")));
         }
 
         // Kill Streak nodes
@@ -59,16 +68,11 @@ public class DTPConfig
         deathStreakMessages = configuration.getStringList("deathstreak", new ArrayList<String>());
         DeathTpPlus.logger.info(deathStreakMessages.size() + " messages loaded for deathstreak");
 
-        if (config.get(ConfigType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("yes")) {
-            worldTravel = true;
-        }
-
-        if (config.get(ConfigType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("yes") || config.get(ConfigType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("no") || config.get(ConfigType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("permissions")) {
-            DeathTpPlus.logger.info("allow-wordtravel is: " + config.get(ConfigType.ALLOW_WORLDTRAVEL));
+        if (configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("yes") || configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("no") || configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("permissions")) {
+            DeathTpPlus.logger.info("allow-wordtravel is: " + configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL));
         }
         else {
-            DeathTpPlus.logger.warning("Wrong allow-worldtravel value of " + config.get(ConfigType.ALLOW_WORLDTRAVEL) + ". Defaulting to NO!");
-            worldTravel = false;
+            DeathTpPlus.logger.warning("Wrong allow-worldtravel value of " + configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL) + ". Defaulting to NO!");
         }
     }
 
@@ -112,7 +116,7 @@ public class DTPConfig
         if (!deathEventType.toString().equals("BLOCK_EXPLOSION") && !deathEventType.toString().equals("FIRE_TICK")) {
             nodeName = nodeName.replace("_", "-");
         }
-        
+
         return nodeName;
     }
 }
