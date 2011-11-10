@@ -117,7 +117,7 @@ public class DTPEntityListener extends EntityListener
                 eventAnnounce = getDeathMessage(DeathEventType.UNKNOWN).replace("%n", player.getDisplayName());
             }
 
-            eventAnnounce = DTPUtils.convertColorCode(eventAnnounce);
+            eventAnnounce = DTPUtils.convertColorCodes(eventAnnounce);
 
             if (DTPConfig.configFlags.get(ConfigFlagType.SHOW_DEATHNOTIFY)) {
                 // plugin.getServer().broadcastMessage(eventAnnounce);
@@ -129,7 +129,7 @@ public class DTPEntityListener extends EntityListener
 
             // CraftIRC
             if (DeathTpPlus.craftIRCHandle != null) {
-                DeathTpPlus.craftIRCHandle.sendMessageToTag(DTPUtils.removeColorCode(eventAnnounce), DTPConfig.configValues.get(ConfigValueType.DEATHTP_TAG));
+                DeathTpPlus.craftIRCHandle.sendMessageToTag(DTPUtils.removeColorCodes(eventAnnounce), DTPConfig.configValues.get(ConfigValueType.DEATHTP_TAG));
             }
 
             if (DTPConfig.configFlags.get(ConfigFlagType.ALLOW_DEATHLOG)) {

@@ -122,7 +122,7 @@ public class DTPStreakLog
             teststreak = DTPConfig.deathStreakMessages.get(i);
             testsplit = teststreak.split(":");
             if (Integer.parseInt(testsplit[0]) == -(defCurrentStreak)) {
-                String announce = DTPUtils.convertColorCode(testsplit[1]);
+                String announce = DTPUtils.convertColorCodes(testsplit[1]);
                 plugin.getServer().broadcastMessage(announce.replace("%n", defender));
             }
         }
@@ -131,7 +131,7 @@ public class DTPStreakLog
             teststreak = DTPConfig.killStreakMessages.get(i);
             testsplit = teststreak.split(":");
             if (Integer.parseInt(testsplit[0]) == atkCurrentStreak) {
-                String announce = DTPUtils.convertColorCode(testsplit[1]);
+                String announce = DTPUtils.convertColorCodes(testsplit[1]);
                 plugin.getServer().broadcastMessage(announce.replace("%n", attacker));
             }
         }

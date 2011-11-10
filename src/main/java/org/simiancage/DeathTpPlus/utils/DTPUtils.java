@@ -23,47 +23,14 @@ import org.bukkit.entity.Zombie;
 
 public class DTPUtils
 {
-    public static String convertColorCode(String msg)
+    public static String convertColorCodes(String msg)
     {
-        msg = msg.replace("&0", "§0");
-        msg = msg.replace("&1", "§1");
-        msg = msg.replace("&2", "§2");
-        msg = msg.replace("&3", "§3");
-        msg = msg.replace("&4", "§4");
-        msg = msg.replace("&5", "§5");
-        msg = msg.replace("&6", "§6");
-        msg = msg.replace("&7", "§7");
-        msg = msg.replace("&8", "§8");
-        msg = msg.replace("&9", "§9");
-        msg = msg.replace("&a", "§a");
-        msg = msg.replace("&b", "§b");
-        msg = msg.replace("&c", "§c");
-        msg = msg.replace("&d", "§d");
-        msg = msg.replace("&e", "§e");
-        msg = msg.replace("&f", "§f");
-
-        return msg;
+        return msg.replaceAll("&([0-9a-fA-F])", "§$1");
     }
 
-    public static String removeColorCode(String msg)
+    public static String removeColorCodes(String msg)
     {
-        msg = msg.replace("§0", "");
-        msg = msg.replace("§2", "");
-        msg = msg.replace("§3", "");
-        msg = msg.replace("§4", "");
-        msg = msg.replace("§5", "");
-        msg = msg.replace("§6", "");
-        msg = msg.replace("§7", "");
-        msg = msg.replace("§8", "");
-        msg = msg.replace("§9", "");
-        msg = msg.replace("§a", "");
-        msg = msg.replace("§b", "");
-        msg = msg.replace("§c", "");
-        msg = msg.replace("§d", "");
-        msg = msg.replace("§e", "");
-        msg = msg.replace("§f", "");
-
-        return msg;
+    	return msg.replaceAll("§[0-9a-fA-F]", "");
     }
 
     public static CreatureType getCreatureType(Entity entity)
