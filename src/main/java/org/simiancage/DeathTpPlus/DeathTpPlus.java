@@ -38,8 +38,7 @@ public class DeathTpPlus extends JavaPlugin
     public static DTPDeathLog deathLog;
     private CommandHandler commandHandler;
 
-    // Register
-    public static boolean useRegister = false;
+    // permissions & economy
     public static Permission permission = null;
     public static Economy economy = null;
 

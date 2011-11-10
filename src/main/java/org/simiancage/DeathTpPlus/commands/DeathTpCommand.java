@@ -61,20 +61,16 @@ public class DeathTpCommand implements Command
                     }
                 }
 
-                // Todo CHange => register
                 // costs iconomy
-                if (registerCost > 0) {
-                    if (DeathTpPlus.useRegister) {
-                        if (DeathTpPlus.economy != null && DeathTpPlus.economy.getBalance(player.getName()) > registerCost) {
-                            DeathTpPlus.economy.withdrawPlayer(player.getName(), registerCost);
-                            player.sendMessage("You used " + registerCost + " to use /deathtp");
-                        }
-                        else {
-                            player.sendMessage("You need " + registerCost + " coins to use /deathtp");
-                            teleportok = false;
-                        }
+                if (registerCost > 0 && DeathTpPlus.economy != null) {
+                    if (DeathTpPlus.economy != null && DeathTpPlus.economy.getBalance(player.getName()) > registerCost) {
+                        DeathTpPlus.economy.withdrawPlayer(player.getName(), registerCost);
+                        player.sendMessage("You used " + registerCost + " to use /deathtp");
                     }
-
+                    else {
+                        player.sendMessage("You need " + registerCost + " coins to use /deathtp");
+                        teleportok = false;
+                    }
                 }
 
                 if (teleportok) {
@@ -123,7 +119,7 @@ public class DeathTpCommand implements Command
                     else {
                         player.sendMessage("You do not have a last known death location.");
                     }
-                    if (DeathTpPlus.useRegister && !teleported && DeathTpPlus.economy != null) {
+                    if (!teleported && DeathTpPlus.economy != null) {
                         if (DeathTpPlus.economy != null)
                             DeathTpPlus.economy.depositPlayer(player.getName(), registerCost);
                         player.sendMessage("Giving you back " + registerCost);
@@ -132,7 +128,6 @@ public class DeathTpCommand implements Command
                 else {
                     player.sendMessage("That command is not available");
                 }
-
             }
 
             return true;
