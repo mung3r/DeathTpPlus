@@ -2,17 +2,17 @@ package org.simiancage.DeathTpPlus.models;
 
 import org.bukkit.Location;
 
-public class DeathLocation
+public class DeathLocationRecord
 {
     private String playerName;
     private Location location;
     private String worldName;
 
-    public DeathLocation()
+    public DeathLocationRecord()
     {
     }
 
-    public DeathLocation(String record)
+    public DeathLocationRecord(String record)
     {
         if (record != null) {
             String[] parts = record.split(":");

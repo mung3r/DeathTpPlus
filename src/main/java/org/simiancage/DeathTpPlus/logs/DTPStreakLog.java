@@ -11,7 +11,7 @@ import java.util.List;
 
 import org.simiancage.DeathTpPlus.DeathTpPlus;
 import org.simiancage.DeathTpPlus.models.DeathDetail;
-import org.simiancage.DeathTpPlus.models.Streak;
+import org.simiancage.DeathTpPlus.models.StreakRecord;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
 import org.simiancage.DeathTpPlus.utils.DTPUtils;
 
@@ -35,16 +35,16 @@ public class DTPStreakLog
         }
     }
 
-    public Streak getRecord(String playerName)
+    public StreakRecord getRecord(String playerName)
     {
-        Streak streak = null;
+        StreakRecord streak = null;
 
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
 
             String line = null;
             while ((line = bufferedReader.readLine()) != null) {
-                streak = new Streak(line);
+                streak = new StreakRecord(line);
                 if (playerName.equalsIgnoreCase(streak.getPlayerName())) {
                     return streak;
                 }
@@ -73,7 +73,7 @@ public class DTPStreakLog
     {
 
         // read the file
-        List<Streak> streakList = new ArrayList<Streak>();
+        List<StreakRecord> streakList = new ArrayList<StreakRecord>();
 
         int atkCurrentStreak = 0;
         int defCurrentStreak = 0;
@@ -85,7 +85,7 @@ public class DTPStreakLog
 
             String line = null;
             while ((line = br.readLine()) != null) {
-                Streak streak = new Streak(line);
+                StreakRecord streak = new StreakRecord(line);
                 if (defender.equalsIgnoreCase(streak.getPlayerName())) {
                     if (streak.getCount() > 0) {
                         streak.setCount(0);
@@ -112,14 +112,14 @@ public class DTPStreakLog
         }
 
         if (!foundAttacker) {
-            Streak streak = new Streak();
+            StreakRecord streak = new StreakRecord();
             streak.setPlayerName(attacker);
             streak.setCount(1);
             streakList.add(streak);
         }
 
         if (!foundDefender) {
-            Streak streak = new Streak();
+            StreakRecord streak = new StreakRecord();
             streak.setPlayerName(defender);
             streak.setCount(-1);
             streakList.add(streak);
@@ -149,7 +149,7 @@ public class DTPStreakLog
         try {
             BufferedWriter logFile = new BufferedWriter(new FileWriter(file));
 
-            for (Streak streak : streakList) {
+            for (StreakRecord streak : streakList) {
                 logFile.write(streak.toString());
                 logFile.newLine();
             }

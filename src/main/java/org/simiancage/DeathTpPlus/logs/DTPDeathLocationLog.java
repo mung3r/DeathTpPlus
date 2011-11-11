@@ -12,7 +12,7 @@ import java.util.List;
 import org.bukkit.entity.Player;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
 import org.simiancage.DeathTpPlus.models.DeathDetail;
-import org.simiancage.DeathTpPlus.models.DeathLocation;
+import org.simiancage.DeathTpPlus.models.DeathLocationRecord;
 
 public class DTPDeathLocationLog
 {
@@ -32,16 +32,16 @@ public class DTPDeathLocationLog
         }
     }
 
-    public DeathLocation getRecord(String playerName)
+    public DeathLocationRecord getRecord(String playerName)
     {
-        DeathLocation deathLocation = null;
+        DeathLocationRecord deathLocation = null;
 
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
             String line = null;
 
             while ((line = bufferedReader.readLine()) != null) {
-                deathLocation = new DeathLocation(line);
+                deathLocation = new DeathLocationRecord(line);
                 if (playerName.equalsIgnoreCase(deathLocation.getPlayerName())) {
                     return deathLocation;
                 }
@@ -64,9 +64,9 @@ public class DTPDeathLocationLog
     @Deprecated
     public void setRecord(Player player)
     {
-        List<DeathLocation> deathLocations = new ArrayList<DeathLocation>();
+        List<DeathLocationRecord> deathLocations = new ArrayList<DeathLocationRecord>();
         boolean newPlayerDeath = true;
-        DeathLocation newLocation = new DeathLocation();
+        DeathLocationRecord newLocation = new DeathLocationRecord();
         newLocation.setPlayerName(player.getName());
         newLocation.setLocation(player.getLocation());
         newLocation.setWorldName(player.getWorld().getName());
@@ -77,7 +77,7 @@ public class DTPDeathLocationLog
 
             String line = null;
             while ((line = br.readLine()) != null) {
-                DeathLocation deathLocation = new DeathLocation(line);
+                DeathLocationRecord deathLocation = new DeathLocationRecord(line);
                 if (player.getName().equalsIgnoreCase(deathLocation.getPlayerName())) {
                     deathLocations.add(newLocation);
                     newPlayerDeath = false;
@@ -95,7 +95,7 @@ public class DTPDeathLocationLog
 
             BufferedWriter out = new BufferedWriter(new FileWriter(file));
 
-            for (DeathLocation deathLocation : deathLocations) {
+            for (DeathLocationRecord deathLocation : deathLocations) {
                 out.write(deathLocation.toString());
                 out.newLine();
             }

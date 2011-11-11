@@ -4,7 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
-import org.simiancage.DeathTpPlus.models.Streak;
+import org.simiancage.DeathTpPlus.models.StreakRecord;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
 import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigFlagType;
 
@@ -35,7 +35,7 @@ public class StreakCommand implements Command
             }
 
             boolean entryfound = false;
-            Streak streak = DeathTpPlus.streakLog.getRecord(playername);
+            StreakRecord streak = DeathTpPlus.streakLog.getRecord(playername);
             if (streak != null) {
                 if (playername.equalsIgnoreCase(streak.getPlayerName())) {
                     if (streak.getCount() < 0) {

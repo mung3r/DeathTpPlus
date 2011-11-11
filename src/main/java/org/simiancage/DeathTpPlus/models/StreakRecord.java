@@ -1,15 +1,15 @@
 package org.simiancage.DeathTpPlus.models;
 
-public class Streak
+public class StreakRecord
 {
     private String playerName;
     private int count;
 
-    public Streak()
+    public StreakRecord()
     {
     }
 
-    public Streak(String record)
+    public StreakRecord(String record)
     {
         if (record != null) {
             String[] parts = record.split(":");
