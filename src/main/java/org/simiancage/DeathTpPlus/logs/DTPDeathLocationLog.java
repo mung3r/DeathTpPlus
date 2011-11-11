@@ -11,17 +11,16 @@ import java.util.List;
 
 import org.bukkit.entity.Player;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
+import org.simiancage.DeathTpPlus.models.DeathDetail;
 import org.simiancage.DeathTpPlus.models.DeathLocation;
 
 public class DTPDeathLocationLog
 {
-    private DeathTpPlus plugin;
     private File file;
     private static final String LOCATION_LOG_FILE = "locs.txt";
 
-    public DTPDeathLocationLog(DeathTpPlus plugin)
+    public DTPDeathLocationLog()
     {
-        this.plugin = plugin;
         file = new File(DeathTpPlus.dataFolder, LOCATION_LOG_FILE);
         if (!file.exists()) {
             try {
@@ -57,6 +56,12 @@ public class DTPDeathLocationLog
         return deathLocation;
     }
 
+    public void setRecord(DeathDetail deathDetail)
+    {
+        setRecord(deathDetail.getPlayer());
+    }
+
+    @Deprecated
     public void setRecord(Player player)
     {
         List<DeathLocation> deathLocations = new ArrayList<DeathLocation>();

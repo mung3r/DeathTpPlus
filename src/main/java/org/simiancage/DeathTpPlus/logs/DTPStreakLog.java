@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.simiancage.DeathTpPlus.DeathTpPlus;
+import org.simiancage.DeathTpPlus.models.DeathDetail;
 import org.simiancage.DeathTpPlus.models.Streak;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
 import org.simiancage.DeathTpPlus.utils.DTPUtils;
@@ -58,6 +59,12 @@ public class DTPStreakLog
         return streak;
     }
 
+    public void setRecord(DeathDetail deathDetail)
+    {
+        setRecord(deathDetail.getKiller().getName(), deathDetail.getPlayer().getName());
+    }
+
+    @Deprecated
     public void setRecord(String attacker, String defender)
     {
 
@@ -113,26 +120,23 @@ public class DTPStreakLog
             streakList.add(streak);
         }
 
-        String teststreak = "";
-        String testsplit[];
-
         // Check to see if we should announce a streak
-        // Deaths
-        for (int i = 0; i < DTPConfig.deathStreakMessages.size(); i++) {
-            teststreak = DTPConfig.deathStreakMessages.get(i);
-            testsplit = teststreak.split(":");
-            if (Integer.parseInt(testsplit[0]) == -(defCurrentStreak)) {
-                String announce = DTPUtils.convertColorCodes(testsplit[1]);
-                plugin.getServer().broadcastMessage(announce.replace("%n", defender));
+        if (DTPConfig.configFlags.get(DTPConfig.ConfigFlagType.SHOW_STREAKS)) {
+            // Deaths
+            for (int i = 0; i < DTPConfig.deathStreakMessages.size(); i++) {
+                String testsplit[] = DTPConfig.deathStreakMessages.get(i).split(":");
+                if (Integer.parseInt(testsplit[0]) == -(defCurrentStreak)) {
+                    String announce = DTPUtils.convertColorCodes(testsplit[1]);
+                    plugin.getServer().broadcastMessage(announce.replace("%n", defender));
+                }
             }
-        }
-        // Kills
-        for (int i = 0; i < DTPConfig.killStreakMessages.size(); i++) {
-            teststreak = DTPConfig.killStreakMessages.get(i);
-            testsplit = teststreak.split(":");
-            if (Integer.parseInt(testsplit[0]) == atkCurrentStreak) {
-                String announce = DTPUtils.convertColorCodes(testsplit[1]);
-                plugin.getServer().broadcastMessage(announce.replace("%n", attacker));
+            // Kills
+            for (int i = 0; i < DTPConfig.killStreakMessages.size(); i++) {
+                String testsplit[] = DTPConfig.killStreakMessages.get(i).split(":");
+                if (Integer.parseInt(testsplit[0]) == atkCurrentStreak) {
+                    String announce = DTPUtils.convertColorCodes(testsplit[1]);
+                    plugin.getServer().broadcastMessage(announce.replace("%n", attacker));
+                }
             }
         }
 

@@ -54,9 +54,9 @@ public class DeathTpPlus extends JavaPlugin
     {
         logger = new DTPLogger(this);
         config = new DTPConfig(this);
-        deathLocationLog = new DTPDeathLocationLog(this);
+        deathLocationLog = new DTPDeathLocationLog();
         streakLog = new DTPStreakLog(this);
-        deathLog = new DTPDeathLog(this);
+        deathLog = new DTPDeathLog();
         commandHandler = new CommandHandler();
 
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);

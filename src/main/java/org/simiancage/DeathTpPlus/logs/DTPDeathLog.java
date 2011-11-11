@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.simiancage.DeathTpPlus.DeathTpPlus;
+import org.simiancage.DeathTpPlus.models.DeathDetail;
 import org.simiancage.DeathTpPlus.models.DeathRecord;
 import org.simiancage.DeathTpPlus.models.DeathRecord.DeathRecordType;
 
@@ -18,12 +19,10 @@ public class DTPDeathLog
     private static final String DEATH_LOG_FILE = "deathlog.txt";
     private static final String DEATH_LOG_TMP = "deathlog.tmp";
 
-    private DeathTpPlus plugin;
     private File file;
 
-    public DTPDeathLog(DeathTpPlus plugin)
+    public DTPDeathLog()
     {
-        this.plugin = plugin;
         file = new File(DeathTpPlus.dataFolder, DEATH_LOG_FILE);
         if (!file.exists()) {
             try {
@@ -58,6 +57,18 @@ public class DTPDeathLog
         return records;
     }
 
+    public void setRecord(DeathDetail deathDetail)
+    {
+        if (deathDetail.isPVPDeath()) {
+            setRecord(deathDetail.getKiller().getName(), DeathRecordType.kill, deathDetail.getPlayer().getName());
+            setRecord(deathDetail.getPlayer().getName(), DeathRecordType.death, deathDetail.getKiller().getName());
+        }
+        else {
+            setRecord(deathDetail.getPlayer().getDisplayName(), DeathRecordType.death, deathDetail.getCauseOfDeath().toString());
+        }
+    }
+
+    @Deprecated
     public void setRecord(String playername, DeathRecordType type, String eventName)
     {
         File deathlogTempFile = new File(DeathTpPlus.dataFolder, DEATH_LOG_TMP);
