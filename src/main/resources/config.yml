@@ -17,16 +17,13 @@ charge-item: 0
 # Show sign tombstones upon death
 show-sign: 'false'
 
-# Register
+# Economy
 deathtp-cost: 10
 
 # CraftIRC
 deathtp-tag: 'all'
 
-#Deathlogs
-allow-deathlog: 'true'
-
-#Allow World Travel = yes, no, permissions
+# Allow World Travel = yes, no, permissions
 allow-worldtravel: 'no'
 
 # ----- Death Messages
