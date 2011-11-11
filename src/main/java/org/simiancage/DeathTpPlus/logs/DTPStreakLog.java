@@ -61,6 +61,10 @@ public class DTPStreakLog
 
     public void setRecord(DeathDetail deathDetail)
     {
+        if (deathDetail.getKiller() == null) {
+            return;
+        }
+
         setRecord(deathDetail.getKiller().getName(), deathDetail.getPlayer().getName());
     }
 
@@ -83,11 +87,11 @@ public class DTPStreakLog
             while ((line = br.readLine()) != null) {
                 Streak streak = new Streak(line);
                 if (defender.equalsIgnoreCase(streak.getPlayerName())) {
-                    defCurrentStreak = streak.getCount();
                     if (streak.getCount() > 0) {
                         streak.setCount(0);
                     }
                     streak.setCount(streak.getCount() - 1);
+                    defCurrentStreak = streak.getCount();
                     foundDefender = true;
                 }
                 if (attacker.equalsIgnoreCase(streak.getPlayerName())) {
@@ -95,6 +99,7 @@ public class DTPStreakLog
                         streak.setCount(0);
                     }
                     streak.setCount(streak.getCount() + 1);
+                    atkCurrentStreak = streak.getCount();
                     foundAttacker = true;
                 }
                 streakList.add(streak);
