@@ -27,6 +27,8 @@ public class DeathDetail
 
     public DeathDetail(EntityDeathEvent event)
     {
+        player = (Player) event.getEntity();
+
         EntityDamageEvent damageEvent = event.getEntity().getLastDamageCause();
 
         if (damageEvent instanceof EntityDamageByEntityEvent) {
