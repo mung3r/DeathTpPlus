@@ -2,7 +2,6 @@ package org.simiancage.DeathTpPlus.listeners;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -13,7 +12,6 @@ import org.simiancage.DeathTpPlus.models.DeathDetail;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
 import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigFlagType;
 import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigValueType;
-import org.simiancage.DeathTpPlus.utils.DTPConfig.DeathEventType;
 import org.simiancage.DeathTpPlus.utils.DTPUtils;
 
 public class DTPEntityListener extends EntityListener
@@ -64,23 +62,20 @@ public class DTPEntityListener extends EntityListener
 
         if (DTPConfig.configFlags.get(ConfigFlagType.SHOW_SIGN)) {
             // place sign
-            Block signBlock = deathDetail.getPlayer().getWorld().getBlockAt(deathDetail.getPlayer().getLocation().getBlockX(), deathDetail.getPlayer().getLocation().getBlockY(), deathDetail.getPlayer().getLocation().getBlockZ());
-
+            Block signBlock = deathDetail.getPlayer().getWorld().getBlockAt(deathDetail.getPlayer().getLocation());
             signBlock.setType(Material.SIGN_POST);
 
-            BlockState state = signBlock.getState();
-
-            if (state instanceof Sign) {
-                String signtext;
-                Sign sign = (Sign) state;
+            if (signBlock.getState() instanceof Sign) {
+                Sign sign = (Sign) signBlock.getState();
                 sign.setLine(0, "[RIP]");
                 sign.setLine(1, deathDetail.getPlayer().getDisplayName());
                 sign.setLine(2, "Died by");
-                signtext = deathDetail.getCauseOfDeath().toString().substring(0, 1) + deathDetail.getCauseOfDeath().toString().substring(1).toLowerCase();
-                if (deathDetail.isPVPDeath())
-                    signtext = deathDetail.getKiller().getName();
-
-                sign.setLine(3, signtext);
+                if (deathDetail.isPVPDeath()) {
+                    sign.setLine(3, deathDetail.getKiller().getName());
+                }
+                else {
+                    sign.setLine(3, deathDetail.getCauseOfDeath().toString().substring(0, 1) + deathDetail.getCauseOfDeath().toString().substring(1).toLowerCase());
+                }
             }
         }
     }
