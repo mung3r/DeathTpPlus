@@ -134,7 +134,7 @@ public class DTPConfig
             message = DEFAULT_DEATH_MESSAGE;
         }
         else {
-            message = messages.get(random.nextInt(messages.size())).replace("%n", deathDetail.getPlayer().getDisplayName());
+            message = messages.get(random.nextInt(messages.size())).replace("%n", deathDetail.getPlayer().getName());
         }
 
         if (deathDetail.isPVPDeath()) {

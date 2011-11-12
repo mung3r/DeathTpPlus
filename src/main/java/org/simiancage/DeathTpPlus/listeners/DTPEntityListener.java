@@ -68,7 +68,7 @@ public class DTPEntityListener extends EntityListener
             if (signBlock.getState() instanceof Sign) {
                 Sign sign = (Sign) signBlock.getState();
                 sign.setLine(0, "[RIP]");
-                sign.setLine(1, deathDetail.getPlayer().getDisplayName());
+                sign.setLine(1, deathDetail.getPlayer().getName());
                 sign.setLine(2, "Died by");
                 if (deathDetail.isPVPDeath()) {
                     sign.setLine(3, deathDetail.getKiller().getName());
