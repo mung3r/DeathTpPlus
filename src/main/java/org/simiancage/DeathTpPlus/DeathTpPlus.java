@@ -15,7 +15,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.simiancage.DeathTpPlus.commands.CommandHandler;
 import org.simiancage.DeathTpPlus.listeners.DTPEntityListener;
 import org.simiancage.DeathTpPlus.listeners.DTPStreakListener;
-import org.simiancage.DeathTpPlus.listeners.StreakEventsListener;
 import org.simiancage.DeathTpPlus.logs.DTPDeathLog;
 import org.simiancage.DeathTpPlus.logs.DTPDeathLocationLog;
 import org.simiancage.DeathTpPlus.logs.DTPStreakLog;
