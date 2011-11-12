@@ -9,25 +9,25 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.entity.Player;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
 import org.simiancage.DeathTpPlus.models.DeathDetail;
 import org.simiancage.DeathTpPlus.models.DeathLocationRecord;
 
 public class DTPDeathLocationLog
 {
-    private File file;
     private static final String LOCATION_LOG_FILE = "locs.txt";
+
+    private File deathLocationLogFile;
 
     public DTPDeathLocationLog()
     {
-        file = new File(DeathTpPlus.dataFolder, LOCATION_LOG_FILE);
-        if (!file.exists()) {
+        deathLocationLogFile = new File(DeathTpPlus.dataFolder, LOCATION_LOG_FILE);
+        if (!deathLocationLogFile.exists()) {
             try {
-                file.createNewFile();
+                deathLocationLogFile.createNewFile();
             }
             catch (IOException e) {
-                DeathTpPlus.logger.severe("Failed to create " + file.getName());
+                DeathTpPlus.logger.severe("Failed to create death location log: " + e.toString());
             }
         }
     }
@@ -37,7 +37,7 @@ public class DTPDeathLocationLog
         DeathLocationRecord deathLocation = null;
 
         try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(deathLocationLogFile));
             String line = null;
 
             while ((line = bufferedReader.readLine()) != null) {
@@ -49,8 +49,8 @@ public class DTPDeathLocationLog
 
             bufferedReader.close();
         }
-        catch (Exception e) {
-            DeathTpPlus.logger.severe("Could not read " + file);
+        catch (IOException e) {
+            DeathTpPlus.logger.severe("Failed to read death location log: " + e.toString());
         }
 
         return deathLocation;
@@ -58,53 +58,46 @@ public class DTPDeathLocationLog
 
     public void setRecord(DeathDetail deathDetail)
     {
-        setRecord(deathDetail.getPlayer());
-    }
-
-    @Deprecated
-    public void setRecord(Player player)
-    {
         List<DeathLocationRecord> deathLocations = new ArrayList<DeathLocationRecord>();
-        boolean newPlayerDeath = true;
-        DeathLocationRecord newLocation = new DeathLocationRecord();
-        newLocation.setPlayerName(player.getName());
-        newLocation.setLocation(player.getLocation());
-        newLocation.setWorldName(player.getWorld().getName());
+        DeathLocationRecord playerRecord = null;
 
         try {
-            FileReader fr = new FileReader(file);
-            BufferedReader br = new BufferedReader(fr);
+            BufferedReader deathLocationLogReader = new BufferedReader(new FileReader(deathLocationLogFile));
 
             String line = null;
-            while ((line = br.readLine()) != null) {
+            while ((line = deathLocationLogReader.readLine()) != null) {
                 DeathLocationRecord deathLocation = new DeathLocationRecord(line);
-                if (player.getName().equalsIgnoreCase(deathLocation.getPlayerName())) {
-                    deathLocations.add(newLocation);
-                    newPlayerDeath = false;
+                if (deathDetail.getPlayer().getName().equalsIgnoreCase(deathLocation.getPlayerName())) {
+                    deathLocation.setLocation(deathDetail.getPlayer().getLocation());
+                    deathLocation.setWorldName(deathDetail.getPlayer().getWorld().getName());
+                    playerRecord = deathLocation;
                 }
-                else {
-                    deathLocations.add(deathLocation);
-                }
+                deathLocations.add(deathLocation);
             }
 
-            if (newPlayerDeath) {
-                deathLocations.add(newLocation);
-            }
-
-            br.close();
-
-            BufferedWriter out = new BufferedWriter(new FileWriter(file));
-
-            for (DeathLocationRecord deathLocation : deathLocations) {
-                out.write(deathLocation.toString());
-                out.newLine();
-            }
-
-            // Close the output stream
-            out.close();
+            deathLocationLogReader.close();
         }
         catch (IOException e) {
-            DeathTpPlus.logger.severe(e.toString());
+            DeathTpPlus.logger.severe("Failed to read death location log: " + e.toString());
+        }
+
+        if (playerRecord == null) {
+            playerRecord = new DeathLocationRecord(deathDetail.getPlayer());
+            deathLocations.add(playerRecord);
+        }
+
+        try {
+            BufferedWriter deathLocationLogWriter = new BufferedWriter(new FileWriter(deathLocationLogFile));
+
+            for (DeathLocationRecord deathLocation : deathLocations) {
+                deathLocationLogWriter.write(deathLocation.toString());
+                deathLocationLogWriter.newLine();
+            }
+
+            deathLocationLogWriter.close();
+        }
+        catch (IOException e) {
+            DeathTpPlus.logger.severe("Failed to write death location log: " + e.toString());
         }
     }
 }

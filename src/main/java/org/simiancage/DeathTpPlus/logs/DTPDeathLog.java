@@ -1,11 +1,11 @@
 package org.simiancage.DeathTpPlus.logs;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,17 +19,17 @@ public class DTPDeathLog
     private static final String DEATH_LOG_FILE = "deathlog.txt";
     private static final String DEATH_LOG_TMP = "deathlog.tmp";
 
-    private File file;
+    private File deathLogFile;
 
     public DTPDeathLog()
     {
-        file = new File(DeathTpPlus.dataFolder, DEATH_LOG_FILE);
-        if (!file.exists()) {
+        deathLogFile = new File(DeathTpPlus.dataFolder, DEATH_LOG_FILE);
+        if (!deathLogFile.exists()) {
             try {
-                file.createNewFile();
+                deathLogFile.createNewFile();
             }
             catch (IOException e) {
-                DeathTpPlus.logger.severe("Failed to create " + file.getName());
+                DeathTpPlus.logger.severe("Failed to create death log: " + e.toString());
             }
         }
     }
@@ -39,7 +39,7 @@ public class DTPDeathLog
         List<DeathRecord> records = new ArrayList<DeathRecord>();
 
         try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(deathLogFile));
             String line = null;
             while ((line = bufferedReader.readLine()) != null) {
                 DeathRecord deathRecord = new DeathRecord(line);
@@ -50,8 +50,8 @@ public class DTPDeathLog
 
             bufferedReader.close();
         }
-        catch (Exception e) {
-            DeathTpPlus.logger.severe("Could not read " + file);
+        catch (IOException e) {
+            DeathTpPlus.logger.severe("Failed to read death log: " + e.toString());
         }
 
         return records;
@@ -64,60 +64,55 @@ public class DTPDeathLog
             setRecord(deathDetail.getPlayer().getName(), DeathRecordType.death, deathDetail.getKiller().getName());
         }
         else {
-            setRecord(deathDetail.getPlayer().getDisplayName(), DeathRecordType.death, deathDetail.getCauseOfDeath().toString());
+            setRecord(deathDetail.getPlayer().getName(), DeathRecordType.death, deathDetail.getCauseOfDeath().toString());
         }
     }
 
     @Deprecated
-    public void setRecord(String playername, DeathRecordType type, String eventName)
+    public void setRecord(String playerName, DeathRecordType type, String eventName)
     {
-        File deathlogTempFile = new File(DeathTpPlus.dataFolder, DEATH_LOG_TMP);
-        boolean foundrecord = false;
+        File tmpDeathLogFile = new File(DeathTpPlus.dataFolder, DEATH_LOG_TMP);
+        DeathRecord playerRecord = null;
 
-        if (!deathlogTempFile.exists()) {
+        if (!tmpDeathLogFile.exists()) {
             try {
-                deathlogTempFile.createNewFile();
+                tmpDeathLogFile.createNewFile();
             }
             catch (IOException e) {
-                DeathTpPlus.logger.severe("cannot create file " + deathlogTempFile);
+                DeathTpPlus.logger.severe("Failed to create tmp death log: " + e.toString());
             }
         }
 
         try {
-            PrintWriter pw = new PrintWriter(new FileWriter(deathlogTempFile));
-            BufferedReader br = new BufferedReader(new FileReader(file));
+            BufferedWriter tmpDeathLogWriter = new BufferedWriter(new FileWriter(tmpDeathLogFile));
+            BufferedReader deathLogReader = new BufferedReader(new FileReader(deathLogFile));
 
             String line = null;
-            while ((line = br.readLine()) != null) {
+            while ((line = deathLogReader.readLine()) != null) {
                 DeathRecord deathRecord = new DeathRecord(line);
-                if (playername.equalsIgnoreCase(deathRecord.getPlayerName()) && type.equals(deathRecord.getType()) && eventName.equalsIgnoreCase(deathRecord.getEventName())) {
+                if (playerName.equalsIgnoreCase(deathRecord.getPlayerName()) && type.equals(deathRecord.getType()) && eventName.equalsIgnoreCase(deathRecord.getEventName())) {
                     deathRecord.setCount(deathRecord.getCount() + 1);
-                    foundrecord = true;
+                    playerRecord = deathRecord;
                 }
 
-                pw.println(deathRecord.toString());
-                pw.flush();
+                tmpDeathLogWriter.write(deathRecord.toString());
+                tmpDeathLogWriter.newLine();
             }
 
-            if (!foundrecord) {
-                DeathRecord deathRecord = new DeathRecord();
-                deathRecord.setPlayerName(playername);
-                deathRecord.setType(type);
-                deathRecord.setEventName(eventName);
-                deathRecord.setCount(1);
-
-                pw.println(deathRecord.toString());
-                pw.flush();
+            if (playerRecord == null) {
+                playerRecord = new DeathRecord(playerName, type, eventName, 1);
+                tmpDeathLogWriter.write(playerRecord.toString());
+                tmpDeathLogWriter.newLine();
             }
 
-            pw.close();
-            br.close();
+            tmpDeathLogWriter.close();
+            deathLogReader.close();
 
-            file.delete();
-            deathlogTempFile.renameTo(file);
+            deathLogFile.delete();
+            tmpDeathLogFile.renameTo(deathLogFile);
         }
         catch (IOException e) {
-            DeathTpPlus.logger.severe("Could not edit deathlog: " + e);
+            DeathTpPlus.logger.severe("Failed to edit death log: " + e.toString());
         }
     }
 }
