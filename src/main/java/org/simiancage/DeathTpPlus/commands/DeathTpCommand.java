@@ -31,7 +31,7 @@ public class DeathTpCommand implements Command
             else if (DTPConfig.configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("yes")) {
                 worldTravel = true;
             }
-            double registerCost = Double.valueOf(DTPConfig.configValues.get(ConfigValueType.DEATHTP_COST).trim()).doubleValue();
+            double deathTpCost = Double.valueOf(DTPConfig.configValues.get(ConfigValueType.DEATHTP_COST).trim()).doubleValue();
 
             if (DeathTpPlus.permission != null) {
                 canUseCommand = DeathTpPlus.permission.has(player, "deathtpplus.deathtp");
@@ -62,13 +62,13 @@ public class DeathTpCommand implements Command
                 }
 
                 // costs iconomy
-                if (registerCost > 0 && DeathTpPlus.economy != null) {
-                    if (DeathTpPlus.economy != null && DeathTpPlus.economy.getBalance(player.getName()) > registerCost) {
-                        DeathTpPlus.economy.withdrawPlayer(player.getName(), registerCost);
-                        player.sendMessage("You used " + registerCost + " to use /deathtp");
+                if (deathTpCost > 0 && DeathTpPlus.economy != null) {
+                    if (DeathTpPlus.economy.getBalance(player.getName()) > deathTpCost) {
+                        DeathTpPlus.economy.withdrawPlayer(player.getName(), deathTpCost);
+                        player.sendMessage("You used " + deathTpCost + " to use /deathtp");
                     }
                     else {
-                        player.sendMessage("You need " + registerCost + " coins to use /deathtp");
+                        player.sendMessage("You need " + deathTpCost + " coins to use /deathtp");
                         teleportok = false;
                     }
                 }
@@ -120,9 +120,8 @@ public class DeathTpCommand implements Command
                         player.sendMessage("You do not have a last known death location.");
                     }
                     if (!teleported && DeathTpPlus.economy != null) {
-                        if (DeathTpPlus.economy != null)
-                            DeathTpPlus.economy.depositPlayer(player.getName(), registerCost);
-                        player.sendMessage("Giving you back " + registerCost);
+                        DeathTpPlus.economy.depositPlayer(player.getName(), deathTpCost);
+                        player.sendMessage("Giving you back " + deathTpCost);
                     }
                 }
                 else {
