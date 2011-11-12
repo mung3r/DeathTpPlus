@@ -37,16 +37,40 @@ public class DeathTpPlus extends JavaPlugin
     public static DTPLogger logger;
     public static DTPConfig config;
     public static DTPDeathLocationLog deathLocationLog;
-    public static DTPStreakLog streakLog;
     public static DTPDeathLog deathLog;
+    public static DTPStreakLog streakLog;
     private CommandHandler commandHandler;
 
     // permissions & economy
     public static Permission permission = null;
     public static Economy economy = null;
 
-    // craftirc
-    public static CraftIRC craftIRCHandle = null;
+    // CraftIRC
+    public static CraftIRC craftIRCPlugin = null;
+
+    private void setupDependencies()
+    {
+        // permission
+        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        if (permissionProvider != null) {
+            permission = permissionProvider.getProvider();
+            logger.info("found permission provider");
+        }
+
+        // economy
+        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+        if (economyProvider != null) {
+            economy = economyProvider.getProvider();
+            logger.info("found economy provider");
+        }
+
+        // hook CraftIRC
+        Plugin plugin = this.getServer().getPluginManager().getPlugin("CraftIRC");
+        if (plugin != null && plugin instanceof CraftIRC) {
+            craftIRCPlugin = (CraftIRC) plugin;
+            logger.info("CraftIRC support enabled");
+        }
+    }
 
     public void onDisable()
     {
@@ -58,37 +82,14 @@ public class DeathTpPlus extends JavaPlugin
         logger = new DTPLogger(this);
         config = new DTPConfig(this);
         deathLocationLog = new DTPDeathLocationLog();
-        streakLog = new DTPStreakLog(this);
         deathLog = new DTPDeathLog();
+        streakLog = new DTPStreakLog(this);
         commandHandler = new CommandHandler();
+
+        setupDependencies();
 
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.CUSTOM_EVENT, streakListener, Priority.Normal, this);
-
-        // Permission
-        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
-        if (permissionProvider != null) {
-            permission = permissionProvider.getProvider();
-            logger.info("found permission provider");
-        }
-
-        // Economy
-        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-        if (economyProvider != null) {
-            economy = economyProvider.getProvider();
-            logger.info("found economy provider");
-        }
-
-        // craftirc
-        Plugin checkCraftIRC = this.getServer().getPluginManager().getPlugin("CraftIRC");
-        if (checkCraftIRC != null) {
-            try {
-                craftIRCHandle = (CraftIRC) checkCraftIRC;
-                logger.info("CraftIRC Support Enabled.");
-            }
-            catch (ClassCastException ex) {
-            }
-        }
 
         logger.info("version " + getDescription().getVersion() + " is enabled!");
     }

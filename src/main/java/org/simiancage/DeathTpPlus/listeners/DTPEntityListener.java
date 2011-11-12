@@ -55,8 +55,8 @@ public class DTPEntityListener extends EntityListener
             }
 
             // CraftIRC
-            if (DeathTpPlus.craftIRCHandle != null) {
-                DeathTpPlus.craftIRCHandle.sendMessageToTag(DTPUtils.removeColorCodes(deathMessage), DTPConfig.configValues.get(ConfigValueType.DEATHTP_TAG));
+            if (DeathTpPlus.craftIRCPlugin != null) {
+                DeathTpPlus.craftIRCPlugin.sendMessageToTag(DTPUtils.removeColorCodes(deathMessage), DTPConfig.configValues.get(ConfigValueType.DEATHTP_TAG));
             }
         }
 
