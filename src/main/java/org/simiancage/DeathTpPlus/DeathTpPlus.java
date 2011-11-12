@@ -14,6 +14,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.simiancage.DeathTpPlus.commands.CommandHandler;
 import org.simiancage.DeathTpPlus.listeners.DTPEntityListener;
+import org.simiancage.DeathTpPlus.listeners.DTPStreakListener;
+import org.simiancage.DeathTpPlus.listeners.StreakEventsListener;
 import org.simiancage.DeathTpPlus.logs.DTPDeathLog;
 import org.simiancage.DeathTpPlus.logs.DTPDeathLocationLog;
 import org.simiancage.DeathTpPlus.logs.DTPStreakLog;
@@ -29,6 +31,7 @@ public class DeathTpPlus extends JavaPlugin
 
     // damage and death listener
     private final DTPEntityListener entityListener = new DTPEntityListener(this);
+    private final DTPStreakListener streakListener = new DTPStreakListener(this);
 
     // plugin variables
     public static DTPLogger logger;
@@ -60,6 +63,7 @@ public class DeathTpPlus extends JavaPlugin
         commandHandler = new CommandHandler();
 
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.CUSTOM_EVENT, streakListener, Priority.Normal, this);
 
         // Permission
         RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
@@ -89,6 +93,7 @@ public class DeathTpPlus extends JavaPlugin
         logger.info("version " + getDescription().getVersion() + " is enabled!");
     }
 
+    @Override
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
     {
         return commandHandler.dispatch(sender, commandLabel, args);

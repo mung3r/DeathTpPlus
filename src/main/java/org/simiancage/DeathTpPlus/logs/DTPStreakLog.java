@@ -10,10 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.simiancage.DeathTpPlus.DeathTpPlus;
+import org.simiancage.DeathTpPlus.events.DeathStreakEvent;
+import org.simiancage.DeathTpPlus.events.KillStreakEvent;
 import org.simiancage.DeathTpPlus.models.DeathDetail;
 import org.simiancage.DeathTpPlus.models.StreakRecord;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
-import org.simiancage.DeathTpPlus.utils.DTPUtils;
 
 public class DTPStreakLog
 {
@@ -65,13 +66,9 @@ public class DTPStreakLog
             return;
         }
 
-        setRecord(deathDetail.getKiller().getName(), deathDetail.getPlayer().getName());
-    }
-
-    @Deprecated
-    public void setRecord(String attacker, String defender)
-    {
-
+        String attacker = deathDetail.getKiller().getName();
+        String defender = deathDetail.getPlayer().getName();
+        
         // read the file
         List<StreakRecord> streakList = new ArrayList<StreakRecord>();
 
@@ -130,12 +127,12 @@ public class DTPStreakLog
             // Deaths
             String deathStreakMessage = DTPConfig.getDeathStreakMessage(defCurrentStreak);
             if (deathStreakMessage != null) {
-                plugin.getServer().broadcastMessage(deathStreakMessage.replace("%n", defender));
+                plugin.getServer().getPluginManager().callEvent(new DeathStreakEvent(deathDetail.getPlayer(), deathStreakMessage));
             }
             // Kills
             String killStreakMessage = DTPConfig.getKillStreakMessage(atkCurrentStreak);
             if (killStreakMessage != null) {
-                plugin.getServer().broadcastMessage(killStreakMessage.replace("%n", attacker));
+                plugin.getServer().getPluginManager().callEvent(new KillStreakEvent(deathDetail.getKiller(), killStreakMessage));
             }
         }
 
