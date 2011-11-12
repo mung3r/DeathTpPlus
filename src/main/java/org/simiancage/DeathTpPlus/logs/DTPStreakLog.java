@@ -68,7 +68,7 @@ public class DTPStreakLog
 
         String attacker = deathDetail.getKiller().getName();
         String defender = deathDetail.getPlayer().getName();
-        
+
         // read the file
         List<StreakRecord> streakList = new ArrayList<StreakRecord>();
 
@@ -127,12 +127,12 @@ public class DTPStreakLog
             // Deaths
             String deathStreakMessage = DTPConfig.getDeathStreakMessage(defCurrentStreak);
             if (deathStreakMessage != null) {
-                plugin.getServer().getPluginManager().callEvent(new DeathStreakEvent(deathDetail.getPlayer(), deathStreakMessage));
+                plugin.getServer().getPluginManager().callEvent(new DeathStreakEvent(deathDetail.getPlayer(), deathStreakMessage, defCurrentStreak));
             }
             // Kills
             String killStreakMessage = DTPConfig.getKillStreakMessage(atkCurrentStreak);
             if (killStreakMessage != null) {
-                plugin.getServer().getPluginManager().callEvent(new KillStreakEvent(deathDetail.getKiller(), killStreakMessage));
+                plugin.getServer().getPluginManager().callEvent(new KillStreakEvent(deathDetail.getKiller(), killStreakMessage, atkCurrentStreak));
             }
         }
 
