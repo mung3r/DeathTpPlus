@@ -1,14 +1,14 @@
 package org.simiancage.DeathTpPlus.listeners;
 
-import org.bukkit.plugin.Plugin;
+import org.simiancage.DeathTpPlus.DeathTpPlus;
 import org.simiancage.DeathTpPlus.events.DeathStreakEvent;
 import org.simiancage.DeathTpPlus.events.KillStreakEvent;
 
 public class DTPStreakListener extends StreakEventsListener
 {
-    private Plugin plugin;
+    private DeathTpPlus plugin;
 
-    public DTPStreakListener(Plugin plugin)
+    public DTPStreakListener(DeathTpPlus plugin)
     {
         this.plugin = plugin;
     }
