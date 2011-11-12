@@ -128,20 +128,14 @@ public class DTPStreakLog
         // Check to see if we should announce a streak
         if (DTPConfig.configFlags.get(DTPConfig.ConfigFlagType.SHOW_STREAKS)) {
             // Deaths
-            for (int i = 0; i < DTPConfig.deathStreakMessages.size(); i++) {
-                String testsplit[] = DTPConfig.deathStreakMessages.get(i).split(":");
-                if (Integer.parseInt(testsplit[0]) == -(defCurrentStreak)) {
-                    String announce = DTPUtils.convertColorCodes(testsplit[1]);
-                    plugin.getServer().broadcastMessage(announce.replace("%n", defender));
-                }
+            String deathStreakMessage = DTPConfig.getDeathStreakMessage(defCurrentStreak);
+            if (deathStreakMessage != null) {
+                plugin.getServer().broadcastMessage(deathStreakMessage.replace("%n", defender));
             }
             // Kills
-            for (int i = 0; i < DTPConfig.killStreakMessages.size(); i++) {
-                String testsplit[] = DTPConfig.killStreakMessages.get(i).split(":");
-                if (Integer.parseInt(testsplit[0]) == atkCurrentStreak) {
-                    String announce = DTPUtils.convertColorCodes(testsplit[1]);
-                    plugin.getServer().broadcastMessage(announce.replace("%n", attacker));
-                }
+            String killStreakMessage = DTPConfig.getKillStreakMessage(atkCurrentStreak);
+            if (killStreakMessage != null) {
+                plugin.getServer().broadcastMessage(killStreakMessage.replace("%n", attacker));
             }
         }
 

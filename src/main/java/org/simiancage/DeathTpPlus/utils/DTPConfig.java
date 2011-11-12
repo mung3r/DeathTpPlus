@@ -6,9 +6,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import org.bukkit.util.config.Configuration;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
+import org.simiancage.DeathTpPlus.models.DeathDetail;
 
 public class DTPConfig
 {
@@ -32,7 +34,9 @@ public class DTPConfig
     public static boolean worldTravel = false;
 
     private static final String CONFIG_FILE = "config.yml";
+    private static final String DEFAULT_DEATH_MESSAGE = "%n died from unknown causes";
     private static File configFile;
+    private static Random random = new Random();
 
     private Configuration configuration;
     private DeathTpPlus plugin;
@@ -68,7 +72,8 @@ public class DTPConfig
         deathStreakMessages = configuration.getStringList("deathstreak", new ArrayList<String>());
         DeathTpPlus.logger.info(deathStreakMessages.size() + " messages loaded for deathstreak");
 
-        if (configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("yes") || configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("no") || configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("permissions")) {
+        if (configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("yes") || configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("no")
+                || configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("permissions")) {
             DeathTpPlus.logger.info("allow-wordtravel is: " + configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL));
         }
         else {
@@ -118,5 +123,48 @@ public class DTPConfig
         }
 
         return nodeName;
+    }
+
+    public static String getDeathMessage(DeathDetail deathDetail)
+    {
+        String message;
+        List<String> messages = deathMessages.get(deathDetail.getCauseOfDeath());
+
+        if (messages == null) {
+            message = DEFAULT_DEATH_MESSAGE;
+        }
+        else {
+            message = messages.get(random.nextInt(messages.size())).replace("%n", deathDetail.getPlayer().getDisplayName());
+        }
+
+        if (deathDetail.isPVPDeath()) {
+            message = message.replace("%i", deathDetail.getMurderWeapon()).replace("%a", deathDetail.getKiller().getName());
+        }
+
+        return DTPUtils.convertColorCodes(message);
+    }
+
+    public static String getDeathStreakMessage(Integer defCurrentStreak)
+    {
+        for (String message : deathStreakMessages) {
+            String parts[] = message.split(":");
+            if (Integer.parseInt(parts[0]) == -defCurrentStreak) {
+                return DTPUtils.convertColorCodes(parts[1]);
+            }
+        }
+
+        return null;
+    }
+
+    public static String getKillStreakMessage(Integer atkCurrentStreak)
+    {
+        for (String message : killStreakMessages) {
+            String parts[] = message.split(":");
+            if (Integer.parseInt(parts[0]) == atkCurrentStreak) {
+                return DTPUtils.convertColorCodes(parts[1]);
+            }
+        }
+
+        return null;
     }
 }

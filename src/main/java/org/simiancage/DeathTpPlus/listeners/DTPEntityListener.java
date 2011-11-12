@@ -1,7 +1,5 @@
 package org.simiancage.DeathTpPlus.listeners;
 
-import java.util.Random;
-
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -52,38 +50,21 @@ public class DTPEntityListener extends EntityListener
 
         if (DTPConfig.configFlags.get(ConfigFlagType.SHOW_DEATHNOTIFY)) {
 
-            // TODO: change into case statement and create methods for
-            // eventAnnounce
-            String eventAnnounce = getDeathMessage(deathDetail.getCauseOfDeath()).replace("%n", deathDetail.getPlayer().getDisplayName());
-
-            if (deathDetail.isPVPDeath()) {
-                eventAnnounce = eventAnnounce.replace("%i", deathDetail.getMurderWeapon()).replace("%a", deathDetail.getKiller().getName());
-            }
-
-            if (eventAnnounce.isEmpty()) {
-                eventAnnounce = getDeathMessage(DeathEventType.UNKNOWN).replace("%n", deathDetail.getPlayer().getDisplayName());
-            }
-
-            eventAnnounce = DTPUtils.convertColorCodes(eventAnnounce);
-
-            // plugin.getServer().broadcastMessage(eventAnnounce);
+            String deathMessage = DTPConfig.getDeathMessage(deathDetail);
+            
             if (event instanceof PlayerDeathEvent) {
-                ((PlayerDeathEvent) event).setDeathMessage(eventAnnounce);
+                ((PlayerDeathEvent) event).setDeathMessage(deathMessage);
             }
 
             // CraftIRC
             if (DeathTpPlus.craftIRCHandle != null) {
-                DeathTpPlus.craftIRCHandle.sendMessageToTag(DTPUtils.removeColorCodes(eventAnnounce), DTPConfig.configValues.get(ConfigValueType.DEATHTP_TAG));
+                DeathTpPlus.craftIRCHandle.sendMessageToTag(DTPUtils.removeColorCodes(deathMessage), DTPConfig.configValues.get(ConfigValueType.DEATHTP_TAG));
             }
         }
 
         if (DTPConfig.configFlags.get(ConfigFlagType.SHOW_SIGN)) {
             // place sign
-            Block signBlock = deathDetail
-                    .getPlayer()
-                    .getWorld()
-                    .getBlockAt(deathDetail.getPlayer().getLocation().getBlockX(), deathDetail.getPlayer().getLocation().getBlockY(),
-                            deathDetail.getPlayer().getLocation().getBlockZ());
+            Block signBlock = deathDetail.getPlayer().getWorld().getBlockAt(deathDetail.getPlayer().getLocation().getBlockX(), deathDetail.getPlayer().getLocation().getBlockY(), deathDetail.getPlayer().getLocation().getBlockZ());
 
             signBlock.setType(Material.SIGN_POST);
 
@@ -102,19 +83,5 @@ public class DTPEntityListener extends EntityListener
                 sign.setLine(3, signtext);
             }
         }
-    }
-
-    public String getDeathMessage(DeathEventType deathEventType)
-    {
-        int messageindex = 0;
-
-        if (!DTPConfig.deathMessages.containsKey(deathEventType))
-            return null;
-
-        if (DTPConfig.deathMessages.get(deathEventType).size() > 1) {
-            Random rand = new Random();
-            messageindex = rand.nextInt(DTPConfig.deathMessages.get(deathEventType).size());
-        }
-        return DTPConfig.deathMessages.get(deathEventType).get(messageindex);
     }
 }
