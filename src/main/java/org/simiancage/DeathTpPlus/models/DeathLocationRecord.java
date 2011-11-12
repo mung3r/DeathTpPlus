@@ -1,6 +1,7 @@
 package org.simiancage.DeathTpPlus.models;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 public class DeathLocationRecord
 {
@@ -10,6 +11,13 @@ public class DeathLocationRecord
 
     public DeathLocationRecord()
     {
+    }
+
+    public DeathLocationRecord(Player player)
+    {
+        this.playerName = player.getName();
+        this.location = player.getLocation();
+        this.worldName = player.getWorld().getName();
     }
 
     public DeathLocationRecord(String record)

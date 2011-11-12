@@ -9,6 +9,12 @@ public class StreakRecord
     {
     }
 
+    public StreakRecord(String playerName, int count)
+    {
+        this.playerName = playerName;
+        this.count = count;
+    }
+
     public StreakRecord(String record)
     {
         if (record != null) {

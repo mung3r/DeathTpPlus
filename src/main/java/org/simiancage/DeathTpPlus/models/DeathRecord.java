@@ -15,6 +15,14 @@ public class DeathRecord
     {
     }
 
+    public DeathRecord(String playerName, DeathRecordType type, String eventName, int count)
+    {
+        this.playerName = playerName;
+        this.type = type;
+        this.eventName = eventName;
+        this.count = count;
+    }
+
     public DeathRecord(String record)
     {
         if (record != null) {
