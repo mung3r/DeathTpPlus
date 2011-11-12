@@ -26,7 +26,12 @@ public class DeathTpCommand implements Command
             Player player = (Player) sender;
             String thisWorld = player.getWorld().getName().toString();
             if (DTPConfig.configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("permissions")) {
-                worldTravel = DeathTpPlus.permission.has(player, "deathtpplus.worldtravel");
+                if (DeathTpPlus.permission != null) {
+                    worldTravel = DeathTpPlus.permission.has(player, "deathtpplus.worldtravel");
+                }
+                else {
+                    worldTravel = false;
+                }
             }
             else if (DTPConfig.configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("yes")) {
                 worldTravel = true;

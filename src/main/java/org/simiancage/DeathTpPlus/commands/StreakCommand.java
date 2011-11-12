@@ -17,7 +17,13 @@ public class StreakCommand implements Command
 
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            canUseCommand = DeathTpPlus.permission.playerHas(player, "deathtpplus.streak");
+
+            if (DeathTpPlus.permission != null) {
+                canUseCommand = DeathTpPlus.permission.playerHas(player, "deathtpplus.streak");
+            }
+            else {
+                canUseCommand = true;
+            }
         }
 
         if (canUseCommand && DTPConfig.configFlags.get(ConfigFlagType.SHOW_STREAKS)) {

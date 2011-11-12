@@ -22,7 +22,12 @@ public class DeathsCommand implements Command
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            canUseCommand = DeathTpPlus.permission.playerHas(player, "deathtpplus.deaths");
+            if (DeathTpPlus.permission != null) {
+                canUseCommand = DeathTpPlus.permission.playerHas(player, "deathtpplus.deaths");
+            }
+            else {
+                canUseCommand = true;
+            }
         }
 
         if (canUseCommand) {

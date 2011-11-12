@@ -22,7 +22,12 @@ public class KillsCommand implements Command
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            canUseCommand = DeathTpPlus.permission.playerHas(player, "deathtpplus.kills");
+            if (DeathTpPlus.permission != null) {
+                canUseCommand = DeathTpPlus.permission.playerHas(player, "deathtpplus.kills");
+            }
+            else {
+                canUseCommand = true;
+            }
         }
 
         if (canUseCommand) {
