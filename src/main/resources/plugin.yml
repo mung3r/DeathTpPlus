@@ -4,7 +4,7 @@ version: 1.94-dev
 website: https://github.com/dredhorse/DeathTpPlus
 authors: [Don Redhorse, orig. by. lonelydime]
 description: Death commands including deathtp, deathnotify and deathstreaks.
-depend: [Vault]
+softdepend: [Vault]
 softdepend: [CraftIRC]
 
 commands:
