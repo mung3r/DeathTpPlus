@@ -36,12 +36,11 @@ public class DeathDetail
             if (damager instanceof Player) {
                 if (((Player) damager).getItemInHand().getType().equals(Material.AIR)) {
                     causeOfDeath = DeathEventType.PVP_FISTS;
-                    murderWeapon = "fists";
                 }
                 else {
                     causeOfDeath = DeathEventType.PVP;
-                    murderWeapon = ((Player) damager).getItemInHand().getType().toString();
                 }
+                murderWeapon = ((Player) damager).getItemInHand().getType().toString();
                 killer = (Player) damager;
             }
             else if (damager instanceof Creature) {
