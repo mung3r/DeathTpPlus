@@ -3,6 +3,7 @@ package org.simiancage.DeathTpPlus.events;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
+@SuppressWarnings("serial")
 public class KillStreakEvent extends Event
 {
     private Player player;
