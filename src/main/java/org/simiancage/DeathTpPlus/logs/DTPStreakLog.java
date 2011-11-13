@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.simiancage.DeathTpPlus.DeathTpPlus;
@@ -15,6 +16,7 @@ import org.simiancage.DeathTpPlus.events.KillStreakEvent;
 import org.simiancage.DeathTpPlus.models.DeathDetail;
 import org.simiancage.DeathTpPlus.models.StreakRecord;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
+import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigValueType;
 
 public class DTPStreakLog
 {
@@ -54,7 +56,7 @@ public class DTPStreakLog
 
             bufferedReader.close();
         }
-        catch (Exception e) {
+        catch (IOException e) {
             DeathTpPlus.logger.severe("Failed to read streak log: " + e.toString());
         }
 
@@ -83,17 +85,12 @@ public class DTPStreakLog
             while ((line = streakLogReader.readLine()) != null) {
                 StreakRecord streak = new StreakRecord(line);
                 if (victimName.equalsIgnoreCase(streak.getPlayerName())) {
-                    if (streak.getCount() > 0) {
-                        streak.setCount(0);
-                    }
-                    streak.setCount(streak.getCount() - 1);
+                    streak.setCount(streak.getCount() > 0 ? -1 : streak.getCount() - 1);
                     deathStreakRecord = streak;
                 }
                 if (killerName.equalsIgnoreCase(streak.getPlayerName())) {
-                    if (streak.getCount() < 0) {
-                        streak.setCount(0);
-                    }
-                    streak.setCount(streak.getCount() + 1);
+                    streak.setCount(streak.getCount() < 0 ? 1 : streak.getCount() + 1);
+                    streak.updateMultiKillCount(Long.valueOf(DTPConfig.configValues.get(ConfigValueType.MULTIKILL_TIMEWINDOW)));
                     killStreakRecord = streak;
                 }
                 streakList.add(streak);
@@ -106,12 +103,12 @@ public class DTPStreakLog
         }
 
         if (killStreakRecord == null) {
-            killStreakRecord = new StreakRecord(killerName, 1);
+            killStreakRecord = new StreakRecord(killerName, 1, new Date(), 1);
             streakList.add(killStreakRecord);
         }
 
         if (deathStreakRecord == null) {
-            deathStreakRecord = new StreakRecord(victimName, -1);
+            deathStreakRecord = new StreakRecord(victimName, -1, new Date(0L), 0);
             streakList.add(deathStreakRecord);
         }
 
@@ -123,9 +120,15 @@ public class DTPStreakLog
                 plugin.getServer().getPluginManager().callEvent(new DeathStreakEvent(deathDetail.getPlayer(), deathStreakMessage, deathStreakRecord.getCount()));
             }
             // Kills
-            String killStreakMessage = DTPConfig.getKillStreakMessage(killStreakRecord.getCount());
-            if (killStreakMessage != null) {
-                plugin.getServer().getPluginManager().callEvent(new KillStreakEvent(deathDetail.getKiller(), killStreakMessage, killStreakRecord.getCount()));
+            String multiKillMessage = DTPConfig.getMultiKillMessage(killStreakRecord.getMultiKillCount());
+            if (multiKillMessage != null && killStreakRecord.isWithinMutiKillTimeWindow(Long.valueOf(DTPConfig.configValues.get(ConfigValueType.MULTIKILL_TIMEWINDOW)))) {
+                plugin.getServer().getPluginManager().callEvent(new KillStreakEvent(deathDetail.getKiller(), multiKillMessage, killStreakRecord.getMultiKillCount()));
+            }
+            else {
+                String killStreakMessage = DTPConfig.getKillStreakMessage(killStreakRecord.getCount());
+                if (killStreakMessage != null) {
+                    plugin.getServer().getPluginManager().callEvent(new KillStreakEvent(deathDetail.getKiller(), killStreakMessage, killStreakRecord.getCount()));
+                }
             }
         }
 

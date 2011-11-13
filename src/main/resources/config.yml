@@ -26,6 +26,9 @@ deathtp-tag: 'all'
 # Allow World Travel = yes, no, permissions
 allow-worldtravel: 'no'
 
+# Window of time (in milliseconds) to count kills towards a multikill
+multikill-timewindow: 5000
+
 # ----- Death Messages
 
 # Must contain at least 1 line. If there are more, it will appear randomly when a person dies.

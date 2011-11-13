@@ -19,18 +19,20 @@ public class DTPConfig
     };
 
     public static enum ConfigValueType {
-        CHARGE_ITEM, DEATHTP_COST, DEATHTP_TAG, ALLOW_WORLDTRAVEL
+        CHARGE_ITEM, DEATHTP_COST, DEATHTP_TAG, ALLOW_WORLDTRAVEL, MULTIKILL_TIMEWINDOW
     };
 
     public static enum ConfigFlagType {
         SHOW_DEATHNOTIFY, ALLOW_DEATHTP, SHOW_STREAKS, SHOW_SIGN, ALLOW_DEATHLOG,
     }
 
-    public static HashMap<DeathEventType, List<String>> deathMessages = new HashMap<DeathEventType, List<String>>();
+    private static HashMap<DeathEventType, List<String>> deathMessages = new HashMap<DeathEventType, List<String>>();
+    private static List<String> deathStreakMessages;
+    private static List<String> killStreakMessages;
+    private static List<String> multiKillMessages;
+
     public static HashMap<ConfigValueType, String> configValues = new HashMap<ConfigValueType, String>();
     public static HashMap<ConfigFlagType, Boolean> configFlags = new HashMap<ConfigFlagType, Boolean>();
-    public static List<String> deathStreakMessages;
-    public static List<String> killStreakMessages;
     public static boolean worldTravel = false;
 
     private static final String CONFIG_FILE = "config.yml";
@@ -71,6 +73,9 @@ public class DTPConfig
         // Death Streak nodes
         deathStreakMessages = configuration.getStringList("deathstreak", new ArrayList<String>());
         DeathTpPlus.logger.info(deathStreakMessages.size() + " messages loaded for deathstreak");
+
+        multiKillMessages = configuration.getStringList("multikill", new ArrayList<String>());
+        DeathTpPlus.logger.info(multiKillMessages.size() + " messages loaded for multikill");
 
         if (configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("yes") || configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("no")
                 || configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("permissions")) {
@@ -144,11 +149,11 @@ public class DTPConfig
         return DTPUtils.convertColorCodes(message);
     }
 
-    public static String getDeathStreakMessage(Integer defCurrentStreak)
+    public static String getDeathStreakMessage(Integer deathCount)
     {
         for (String message : deathStreakMessages) {
             String parts[] = message.split(":");
-            if (Integer.parseInt(parts[0]) == -defCurrentStreak) {
+            if (Integer.parseInt(parts[0]) == -deathCount) {
                 return DTPUtils.convertColorCodes(parts[1]);
             }
         }
@@ -156,11 +161,23 @@ public class DTPConfig
         return null;
     }
 
-    public static String getKillStreakMessage(Integer atkCurrentStreak)
+    public static String getKillStreakMessage(Integer killCount)
     {
         for (String message : killStreakMessages) {
             String parts[] = message.split(":");
-            if (Integer.parseInt(parts[0]) == atkCurrentStreak) {
+            if (Integer.parseInt(parts[0]) == killCount) {
+                return DTPUtils.convertColorCodes(parts[1]);
+            }
+        }
+
+        return null;
+    }
+
+    public static String getMultiKillMessage(Integer killCount)
+    {
+        for (String message : multiKillMessages) {
+            String parts[] = message.split(":");
+            if (Integer.parseInt(parts[0]) == killCount) {
                 return DTPUtils.convertColorCodes(parts[1]);
             }
         }
