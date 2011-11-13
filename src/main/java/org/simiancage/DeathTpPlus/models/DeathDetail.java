@@ -40,7 +40,7 @@ public class DeathDetail
                 }
                 else {
                     causeOfDeath = DeathEventType.PVP;
-                    murderWeapon = ((Player) damager).getItemInHand().getType().toString().replace("_", " ").toLowerCase();
+                    murderWeapon = ((Player) damager).getItemInHand().getType().toString();
                 }
                 killer = (Player) damager;
             }
@@ -48,7 +48,7 @@ public class DeathDetail
                 if (damager instanceof Tameable) {
                     if (((Tameable) damager).isTamed()) {
                         causeOfDeath = DeathEventType.PVP_TAMED;
-                        murderWeapon = DTPUtils.getCreatureType(damager).toString().toLowerCase();
+                        murderWeapon = DTPUtils.getCreatureType(damager).toString();
                         killer = (Player) ((Tameable) damager).getOwner();
                     }
                 }
@@ -114,7 +114,7 @@ public class DeathDetail
 
     public String getMurderWeapon()
     {
-        return murderWeapon;
+        return toCamelCase(murderWeapon);
     }
 
     public void setMurderWeapon(String murderWeapon)
@@ -125,5 +125,33 @@ public class DeathDetail
     public Boolean isPVPDeath()
     {
         return causeOfDeath.equals(DeathEventType.PVP) || causeOfDeath.equals(DeathEventType.PVP_FISTS) || causeOfDeath.equals(DeathEventType.PVP_TAMED);
+    }
+
+    private static String toCamelCase(String rawItemName)
+    {
+        String[] rawItemNameParts = rawItemName.split("_");
+        String itemName = "";
+
+        for (String itemNamePart : rawItemNameParts) {
+            itemName = itemName + " " + toProperCase(itemNamePart);
+        }
+
+        if (itemName.trim().equals("Air")) {
+            itemName = "Fists";
+        }
+
+        if (itemName.trim().equals("Bow")) {
+            itemName = "Bow & Arrow";
+        }
+
+        return itemName.trim();
+    }
+
+    private static String toProperCase(String str)
+    {
+        if (str.length() < 1) {
+            return str;
+        }
+        return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
     }
 }
