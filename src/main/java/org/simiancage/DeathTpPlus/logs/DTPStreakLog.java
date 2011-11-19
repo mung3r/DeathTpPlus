@@ -52,6 +52,9 @@ public class DTPStreakLog
                 if (playerName.equalsIgnoreCase(streak.getPlayerName())) {
                     return streak;
                 }
+                else {
+                    streak = null;
+                }
             }
 
             bufferedReader.close();

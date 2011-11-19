@@ -1,7 +1,5 @@
 package org.simiancage.DeathTpPlus.commands;
 
-import java.util.List;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
@@ -10,80 +8,47 @@ import org.simiancage.DeathTpPlus.models.DeathRecord.DeathRecordType;
 
 public class KillsCommand implements Command
 {
-
     public Boolean execute(CommandSender sender, String[] args)
     {
-        boolean canUseCommand = false;
-        String playername = "";
-        String username = "";
-        int totalnum = 0;
-        boolean foundrecord = false;
+        int total;
 
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (args.length > 2)
+            return false;
 
-            if (DeathTpPlus.permission != null) {
-                canUseCommand = DeathTpPlus.permission.playerHas(player, "deathtpplus.kills");
-            }
-            else {
-                canUseCommand = true;
-            }
-        }
-
-        if (canUseCommand) {
-            if (args.length == 0) {
-                if (sender instanceof Player) {
-                    Player player = (Player) sender;
-                    playername = player.getName();
+        switch (args.length) {
+            case 0:
+                Player player = (Player) sender;
+                total = DeathTpPlus.deathLog.getTotalByType(player.getName(), DeathRecordType.kill);
+                if (total > -1) {
+                    sender.sendMessage(String.format("You have %d kill(s)", total));
                 }
                 else {
-                    return false;
+                    sender.sendMessage("No record found.");
                 }
-            }
-            else if (args.length == 1) {
-                playername = args[0];
-            }
-            else if (args.length == 2) {
-                playername = args[0];
-                username = args[1];
-            }
-            else {
-                return false;
-            }
-            // File deathlogFile = new
-            // File(getDataFolder()+"/deathlog.txt");
-            List<DeathRecord> records = DeathTpPlus.deathLog.getRecords(playername);
-            for (DeathRecord record : records) {
-                if (!username.isEmpty()) {
-                    if (record.getPlayerName().equalsIgnoreCase(playername) && record.getType().equals(DeathRecordType.kill) && record.getEventName().equalsIgnoreCase(username)) {
-                        String times = record.getCount() == 1 ? "time" : "times";
-                        sender.sendMessage(playername + " has killed " + username + " " + record.getCount() + " " + times);
-                        foundrecord = true;
-                    }
+                break;
+            case 1:
+                total = DeathTpPlus.deathLog.getTotalByType(args[0], DeathRecordType.kill);
+                if (total > -1) {
+                    sender.sendMessage(String.format("%s has %d kill(s)", args[0], total));
                 }
-                // total count
                 else {
-                    if (record.getPlayerName().equalsIgnoreCase(playername) && record.getType().equals(DeathRecordType.kill)) {
-                        totalnum = totalnum + record.getCount();
-                    }
+                    sender.sendMessage("No record found.");
                 }
-            }
-            if (username.isEmpty()) {
-                String times = "times";
-                if (totalnum == 1) {
-                    times = "time";
+                break;
+            case 2:
+                DeathRecord record = DeathTpPlus.deathLog.getRecordByType(args[0], args[1], DeathRecordType.kill);
+                if (record != null) {
+                    sender.sendMessage(String.format("%s killed %s %d time(s)", args[0], args[1], record.getCount()));
                 }
-                sender.sendMessage(playername + " has killed " + totalnum + " " + times);
-            }
-            else {
-                if (!foundrecord) {
-                    sender.sendMessage(playername + " has killed " + username + " 0 times");
-                }
-            }
-            return true;
+                break;
         }
-        else {
-            return true;
-        }
+
+        return true;
+    }
+
+    @Override
+    public String getPermission()
+    {
+        return "deathtpplus.kills";
     }
 }

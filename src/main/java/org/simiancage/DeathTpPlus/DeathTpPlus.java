@@ -7,6 +7,7 @@ import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.Plugin;
@@ -97,5 +98,13 @@ public class DeathTpPlus extends JavaPlugin
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
     {
         return commandHandler.dispatch(sender, commandLabel, args);
+    }
+
+    public static boolean hasPermission(Player player, String name)
+    {
+        if (permission != null) {
+            return permission.has(player, name);
+        }
+        return player.hasPermission(name);
     }
 }

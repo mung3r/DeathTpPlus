@@ -13,6 +13,7 @@ import org.simiancage.DeathTpPlus.DeathTpPlus;
 import org.simiancage.DeathTpPlus.models.DeathDetail;
 import org.simiancage.DeathTpPlus.models.DeathRecord;
 import org.simiancage.DeathTpPlus.models.DeathRecord.DeathRecordType;
+import org.simiancage.DeathTpPlus.utils.DTPConfig.DeathEventType;
 
 public class DTPDeathLog
 {
@@ -32,6 +33,33 @@ public class DTPDeathLog
                 DeathTpPlus.logger.severe("Failed to create death log: " + e.toString());
             }
         }
+    }
+
+    public int getTotalByType(String playerName, DeathRecordType type)
+    {
+        List<DeathRecord> records = getRecords(playerName);
+        int totalDeaths = -1;
+
+        for (DeathRecord record : records) {
+            if (record.getPlayerName().equalsIgnoreCase(playerName) && record.getType() == type) {
+                totalDeaths += record.getCount();
+            }
+        }
+
+        return totalDeaths;
+    }
+
+    public DeathRecord getRecordByType(String playerName, String eventName, DeathRecordType type)
+    {
+        List<DeathRecord> records = getRecords(playerName);
+
+        for (DeathRecord record : records) {
+            if (record.getPlayerName().equalsIgnoreCase(playerName) && record.getType() == type && record.getEventName().equalsIgnoreCase(eventName)) {
+                return record;
+            }
+        }
+
+        return null;
     }
 
     public List<DeathRecord> getRecords(String playerName)
@@ -90,7 +118,7 @@ public class DTPDeathLog
             String line = null;
             while ((line = deathLogReader.readLine()) != null) {
                 DeathRecord deathRecord = new DeathRecord(line);
-                if (playerName.equalsIgnoreCase(deathRecord.getPlayerName()) && type.equals(deathRecord.getType()) && eventName.equalsIgnoreCase(deathRecord.getEventName())) {
+                if (playerName.equalsIgnoreCase(deathRecord.getPlayerName()) && type == deathRecord.getType() && eventName.equalsIgnoreCase(deathRecord.getEventName())) {
                     deathRecord.setCount(deathRecord.getCount() + 1);
                     playerRecord = deathRecord;
                 }

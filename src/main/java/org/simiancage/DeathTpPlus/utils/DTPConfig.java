@@ -115,10 +115,10 @@ public class DTPConfig
 
     private String mapTypeToNodeName(DeathEventType deathEventType)
     {
-        if (deathEventType.equals(DeathEventType.CAVE_SPIDER)) {
+        if (deathEventType == DeathEventType.CAVE_SPIDER) {
             return "cavespider";
         }
-        else if (deathEventType.equals(DeathEventType.PIG_ZOMBIE)) {
+        else if (deathEventType == DeathEventType.PIG_ZOMBIE) {
             return "pigzombie";
         }
 

@@ -45,6 +45,9 @@ public class DTPDeathLocationLog
                 if (playerName.equalsIgnoreCase(deathLocation.getPlayerName())) {
                     return deathLocation;
                 }
+                else {
+                    deathLocation = null;
+                }
             }
 
             bufferedReader.close();

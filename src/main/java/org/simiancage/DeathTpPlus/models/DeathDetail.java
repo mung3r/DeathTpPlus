@@ -123,7 +123,7 @@ public class DeathDetail
 
     public Boolean isPVPDeath()
     {
-        return causeOfDeath.equals(DeathEventType.PVP) || causeOfDeath.equals(DeathEventType.PVP_FISTS) || causeOfDeath.equals(DeathEventType.PVP_TAMED);
+        return causeOfDeath== DeathEventType.PVP || causeOfDeath == DeathEventType.PVP_FISTS || causeOfDeath == DeathEventType.PVP_TAMED;
     }
 
     private static String toCamelCase(String rawItemName)

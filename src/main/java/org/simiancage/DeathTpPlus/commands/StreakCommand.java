@@ -1,6 +1,5 @@
 package org.simiancage.DeathTpPlus.commands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
@@ -13,54 +12,42 @@ public class StreakCommand implements Command
 
     public Boolean execute(CommandSender sender, String[] args)
     {
-        boolean canUseCommand = false;
+        if (args.length > 1)
+            return false;
 
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (DTPConfig.configFlags.get(ConfigFlagType.SHOW_STREAKS)) {
 
-            if (DeathTpPlus.permission != null) {
-                canUseCommand = DeathTpPlus.permission.playerHas(player, "deathtpplus.streak");
-            }
-            else {
-                canUseCommand = true;
-            }
-        }
+            StreakRecord streak = DeathTpPlus.streakLog.getRecord(args.length > 0 ? args[0] : ((Player) sender).getName());
 
-        if (canUseCommand && DTPConfig.configFlags.get(ConfigFlagType.SHOW_STREAKS)) {
-            Player check;
-            String playername = "player";
-
-            if (args.length > 0) {
-                playername = args[0];
-            }
-            else {
-                if (sender instanceof Player) {
-                    check = (Player) sender;
-                    playername = check.getName();
-                }
-            }
-
-            boolean entryfound = false;
-            StreakRecord streak = DeathTpPlus.streakLog.getRecord(playername);
             if (streak != null) {
-                if (playername.equalsIgnoreCase(streak.getPlayerName())) {
-                    if (streak.getCount() < 0) {
-                        sender.sendMessage(ChatColor.GRAY + streak.getPlayerName() + "'s Current Streak: " + streak.getCount() * -1 + " Death(s)");
+                if (streak.getCount() < 0) {
+                    if (args.length > 0) {
+                        sender.sendMessage(String.format("%s is on a %d death streak.", args[0], streak.getCount() * -1));
                     }
                     else {
-                        sender.sendMessage(ChatColor.GRAY + streak.getPlayerName() + "'s Current Streak: " + streak.getCount() + " Kill(s)");
+                        sender.sendMessage(String.format("You are on a %d death streak.", streak.getCount() * -1));
                     }
-
-                    entryfound = true;
+                }
+                else {
+                    if (args.length > 0) {
+                        sender.sendMessage(String.format("%s is on a %d kill streak.", args[0], streak.getCount()));
+                    }
+                    else {
+                        sender.sendMessage(String.format("You are on a %d kill streak.", streak.getCount()));
+                    }
                 }
             }
-            if (!entryfound) {
-                sender.sendMessage("No streak found");
+            else {
+                sender.sendMessage("No record found.");
             }
-            return true;
         }
-        else {
-            return true;
-        }
+
+        return true;
+    }
+
+    @Override
+    public String getPermission()
+    {
+        return "deathtpplus.streak";
     }
 }
