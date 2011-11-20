@@ -110,13 +110,14 @@ public class DeathTpCommand implements Command
             return true;
 
         // costs iconomy
-        if (DeathTpPlus.economy != null && DeathTpPlus.economy.getBalance(player.getName()) > deathTpCost) {
-            return true;
+        if (DeathTpPlus.economy != null) {
+            if (DeathTpPlus.economy.getBalance(player.getName()) > deathTpCost) {
+                return true;
+            }
+            else {
+                player.sendMessage(String.format("You need %s coins to use /deathtp.", DeathTpPlus.economy.format(deathTpCost)));
+            }
         }
-        else {
-            player.sendMessage(String.format("You need %s coins to use /deathtp.", DeathTpPlus.economy.format(deathTpCost)));
-        }
-
         return false;
     }
 }
