@@ -46,7 +46,6 @@ public class KillsCommand implements Command
         return true;
     }
 
-    @Override
     public String getPermission()
     {
         return "deathtpplus.kills";

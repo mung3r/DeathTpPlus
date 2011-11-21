@@ -45,7 +45,6 @@ public class StreakCommand implements Command
         return true;
     }
 
-    @Override
     public String getPermission()
     {
         return "deathtpplus.streak";

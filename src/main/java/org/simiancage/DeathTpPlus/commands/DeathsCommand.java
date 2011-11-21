@@ -49,7 +49,6 @@ public class DeathsCommand implements Command
         return true;
     }
 
-    @Override
     public String getPermission()
     {
         return "deathtpplus.deaths";
