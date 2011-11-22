@@ -13,7 +13,6 @@ import org.simiancage.DeathTpPlus.DeathTpPlus;
 import org.simiancage.DeathTpPlus.models.DeathDetail;
 import org.simiancage.DeathTpPlus.models.DeathRecord;
 import org.simiancage.DeathTpPlus.models.DeathRecord.DeathRecordType;
-import org.simiancage.DeathTpPlus.utils.DTPConfig.DeathEventType;
 
 public class DTPDeathLog
 {
