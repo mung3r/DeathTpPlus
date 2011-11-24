@@ -3,11 +3,17 @@
   <groupId>org.simiancage.deathtpplus</groupId>
   <artifactId>DeathTpPlus</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <repositories>
+    <repository>
+      <id>bukkit-repo</id>
+      <url>http://repo.bukkit.org/artifactory/repo</url>
+    </repository>
+  </repositories>
   <dependencies>
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>1.0.0-R1-SNAPSHOT</version>
     </dependency>
     <dependency>
     	<groupId>com.ensifera.animosity.craftirc</groupId>
