@@ -7,10 +7,11 @@ import org.bukkit.event.Event;
 public class KillStreakEvent extends Event
 {
     private Player player;
+    private Player victim;
     private String message;
     private Integer kills;
 
-    public KillStreakEvent(Player player, String message, Integer kills)
+    public KillStreakEvent(Player player, Player victim, String message, Integer kills)
     {
         super("KillStreakEvent");
 
@@ -27,6 +28,16 @@ public class KillStreakEvent extends Event
     public void setPlayer(Player player)
     {
         this.player = player;
+    }
+
+    public Player getVictim()
+    {
+        return victim;
+    }
+
+    public void setVictim(Player victim)
+    {
+        this.victim = victim;
     }
 
     public String getMessage()
