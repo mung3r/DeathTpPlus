@@ -281,6 +281,12 @@ giant:
 - '&5%n&7 was stomped by a giant!'
 - '&5%n&7 was flattened by a giant!'
 
+blaze:
+- '&5%n&7 was killed by a blaze!'
+
+enderdragon:
+- '&5%n&7 was killed by a dragon!'
+
 # ----- Streaks
 
 # format <#of kills> <text to display> %n = player getting the message (in this case, the one on a killstreak).
