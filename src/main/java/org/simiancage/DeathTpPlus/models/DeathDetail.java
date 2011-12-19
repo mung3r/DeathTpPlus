@@ -52,7 +52,12 @@ public class DeathDetail
                     }
                 }
                 else {
-                    causeOfDeath = DeathEventType.valueOf(DTPUtils.getCreatureType(damager).toString());
+                    try {
+                        causeOfDeath = DeathEventType.valueOf(DTPUtils.getCreatureType(damager).toString());
+                    }
+                    catch (IllegalArgumentException e) {
+                        causeOfDeath = DeathEventType.UNKNOWN;
+                    }
                 }
             }
             else if (damager instanceof Projectile) {
