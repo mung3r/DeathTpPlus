@@ -62,4 +62,14 @@ public class KillStreakEvent extends Event
         this.kills = kills;
     }
 
+    public Boolean getIsMultiKill()
+    {
+        return isMultiKill;
+    }
+
+    public void setIsMultiKill(Boolean isMultiKill)
+    {
+        this.isMultiKill = isMultiKill;
+    }
+
 }
