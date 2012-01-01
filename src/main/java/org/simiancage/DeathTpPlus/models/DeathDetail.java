@@ -65,7 +65,7 @@ public class DeathDetail
                 // Projectile
                 if (((Projectile) damager).getShooter() instanceof Player) {
                     causeOfDeath = DeathEventType.PVP;
-                    murderWeapon = ((Projectile) damager).getClass().getName();
+                    murderWeapon = ((Projectile) damager).toString().replace("Craft", "");
                     killer = (Player) ((Projectile) damager).getShooter();
                 }
             }
