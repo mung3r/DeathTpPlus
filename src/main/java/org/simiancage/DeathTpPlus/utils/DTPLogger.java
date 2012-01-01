@@ -2,17 +2,24 @@ package org.simiancage.DeathTpPlus.utils;
 
 import java.util.logging.Logger;
 
-import org.simiancage.DeathTpPlus.DeathTpPlus;
-
 public class DTPLogger
 {
-    private DeathTpPlus plugin;
+    private String name = "DeathTpPlus";
     private Logger logger;
 
-    public DTPLogger(DeathTpPlus plugin)
+    public DTPLogger()
     {
-        this.plugin = plugin;
         logger = Logger.getLogger("Minecraft");
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
     }
 
     public void info(String msg)
@@ -32,6 +39,6 @@ public class DTPLogger
 
     public String format(String msg)
     {
-        return String.format("[%s] %s", plugin.getDescription().getName(), msg);
+        return String.format("[%s] %s", name, msg);
     }
 }

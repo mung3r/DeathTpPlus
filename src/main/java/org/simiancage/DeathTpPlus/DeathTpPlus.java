@@ -34,7 +34,7 @@ public class DeathTpPlus extends JavaPlugin
     private final DTPStreakListener streakListener = new DTPStreakListener(this);
 
     // plugin variables
-    public static DTPLogger logger;
+    public static DTPLogger logger = new DTPLogger();
     public static DTPConfig config;
     public static DTPDeathLocationLog deathLocationLog;
     public static DTPDeathLog deathLog;
@@ -79,8 +79,8 @@ public class DeathTpPlus extends JavaPlugin
 
     public void onEnable()
     {
-        logger = new DTPLogger(this);
-        config = new DTPConfig(this);
+        logger.setName(getDescription().getName());
+        config = new DTPConfig();
         deathLocationLog = new DTPDeathLocationLog();
         deathLog = new DTPDeathLog();
         streakLog = new DTPStreakLog(this);

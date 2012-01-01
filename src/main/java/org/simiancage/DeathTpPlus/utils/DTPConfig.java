@@ -15,7 +15,9 @@ import org.simiancage.DeathTpPlus.models.DeathDetail;
 public class DTPConfig
 {
     public static enum DeathEventType {
-        BLAZE, BLOCK_EXPLOSION, CAVE_SPIDER, CONTACT, CREEPER, DROWNING, ENDER_DRAGON, ENDERMAN, FALL, FIRE, FIRE_TICK, GHAST, GIANT, LAVA, LIGHTNING, MONSTER, PIG_ZOMBIE, PVP, PVP_FISTS, PVP_TAMED, SILVERFISH, SKELETON, SLIME, SPIDER, STARVATION, SUFFOCATION, SUICIDE, UNKNOWN, VOID, WOLF, ZOMBIE
+        BLAZE, BLOCK_EXPLOSION, CAVE_SPIDER, CONTACT, CREEPER, DROWNING, ENDER_DRAGON, ENDERMAN, FALL, FIRE, FIRE_TICK,
+        GHAST, GIANT, LAVA, LAVA_SLIME, LIGHTNING, MAGMA_CUBE, MONSTER, PIG_ZOMBIE, PVP, PVP_FISTS, PVP_TAMED, SILVERFISH,
+        SKELETON, SLIME, SPIDER, SQUID, STARVATION, SUFFOCATION, SUICIDE, UNKNOWN, VILLAGER, VOID, WOLF, ZOMBIE
     };
 
     public static enum ConfigValueType {
@@ -41,12 +43,9 @@ public class DTPConfig
     private static Random random = new Random();
 
     private Configuration configuration;
-    private DeathTpPlus plugin;
 
-    public DTPConfig(DeathTpPlus plugin)
+    public DTPConfig()
     {
-        this.plugin = plugin;
-
         configFile = new File(DeathTpPlus.dataFolder, CONFIG_FILE);
         configuration = getConfig(configFile);
         configuration.load();
