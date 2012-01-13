@@ -123,7 +123,7 @@ public class DTPStreakLog
         }
 
         // Check to see if we should announce a streak
-        if (DTPConfig.configFlags.get(DTPConfig.ConfigFlagType.SHOW_STREAKS)) {
+        if (deathDetail.getCauseOfDeath() != DeathEventType.SUICIDE && DTPConfig.configFlags.get(DTPConfig.ConfigFlagType.SHOW_STREAKS)) {
             // Deaths
             String deathStreakMessage = DTPConfig.getDeathStreakMessage(deathStreakRecord.getCount());
             if (deathStreakMessage != null) {
