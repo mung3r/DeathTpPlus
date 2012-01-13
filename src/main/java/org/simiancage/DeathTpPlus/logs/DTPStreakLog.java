@@ -17,6 +17,7 @@ import org.simiancage.DeathTpPlus.models.DeathDetail;
 import org.simiancage.DeathTpPlus.models.StreakRecord;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
 import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigValueType;
+import org.simiancage.DeathTpPlus.utils.DTPConfig.DeathEventType;
 
 public class DTPStreakLog
 {
@@ -68,12 +69,18 @@ public class DTPStreakLog
 
     public void setRecord(DeathDetail deathDetail)
     {
-        if (deathDetail.getKiller() == null) {
+        String killerName;
+        String victimName = deathDetail.getPlayer().getName();
+
+        if (deathDetail.getCauseOfDeath() == DeathEventType.SUICIDE) {
+            killerName = deathDetail.getCauseOfDeath().toString();
+        }
+        else if (deathDetail.getKiller() != null) {
+            killerName = deathDetail.getKiller().getName();
+        }
+        else {
             return;
         }
-
-        String killerName = deathDetail.getKiller().getName();
-        String victimName = deathDetail.getPlayer().getName();
 
         List<StreakRecord> streakList = new ArrayList<StreakRecord>();
 
