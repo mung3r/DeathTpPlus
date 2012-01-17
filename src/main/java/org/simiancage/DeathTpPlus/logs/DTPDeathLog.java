@@ -95,8 +95,7 @@ public class DTPDeathLog
         }
     }
 
-    @Deprecated
-    public void setRecord(String playerName, DeathRecordType type, String eventName)
+    private void setRecord(String playerName, DeathRecordType type, String eventName)
     {
         File tmpDeathLogFile = new File(DeathTpPlus.dataFolder, DEATH_LOG_TMP);
         DeathRecord playerRecord = null;

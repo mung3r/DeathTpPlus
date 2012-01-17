@@ -61,13 +61,12 @@ public class DeathDetail
                 }
             }
             else if (damager instanceof Projectile) {
-                // TODO: find out why we never get damager instance of
-                // Projectile
                 if (((Projectile) damager).getShooter() instanceof Player) {
                     causeOfDeath = DeathEventType.PVP;
                     murderWeapon = ((Projectile) damager).toString().replace("Craft", "");
                     killer = (Player) ((Projectile) damager).getShooter();
                 }
+                // TODO: death by dispenser?
             }
             else if (damager instanceof TNTPrimed) {
                 causeOfDeath = DeathEventType.BLOCK_EXPLOSION;
