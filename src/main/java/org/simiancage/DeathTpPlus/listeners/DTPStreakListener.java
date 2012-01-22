@@ -1,27 +1,27 @@
 package org.simiancage.DeathTpPlus.listeners;
 
-import org.simiancage.DeathTpPlus.DeathTpPlus;
+import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.simiancage.DeathTpPlus.events.DeathStreakEvent;
 import org.simiancage.DeathTpPlus.events.KillStreakEvent;
 
-public class DTPStreakListener extends StreakEventsListener
+public class DTPStreakListener implements Listener
 {
-    private DeathTpPlus plugin;
-
-    public DTPStreakListener(DeathTpPlus plugin)
+    public DTPStreakListener()
     {
-        this.plugin = plugin;
     }
 
-    @Override
+    @EventHandler(event = DeathStreakEvent.class, priority = EventPriority.NORMAL)
     public void onDeathStreakEvent(DeathStreakEvent event)
     {
-        plugin.getServer().broadcastMessage(event.getMessage().replace("%n", event.getPlayer().getName()));
+        Bukkit.broadcastMessage(event.getMessage().replace("%n", event.getPlayer().getName()));
     }
 
-    @Override
+    @EventHandler(event = KillStreakEvent.class, priority = EventPriority.NORMAL)
     public void onKillStreakEvent(KillStreakEvent event)
     {
-        plugin.getServer().broadcastMessage(event.getMessage().replace("%n", event.getPlayer().getName()));
+        Bukkit.broadcastMessage(event.getMessage().replace("%n", event.getPlayer().getName()));
     }
 }

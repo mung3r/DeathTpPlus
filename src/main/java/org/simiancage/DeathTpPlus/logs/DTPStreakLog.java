@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
 import org.simiancage.DeathTpPlus.events.DeathStreakEvent;
 import org.simiancage.DeathTpPlus.events.KillStreakEvent;
@@ -23,12 +24,10 @@ public class DTPStreakLog
 {
     private static final String STREAK_LOG_FILE = "streak.txt";
 
-    private DeathTpPlus plugin;
     private File streakLogFile;
 
-    public DTPStreakLog(DeathTpPlus plugin)
+    public DTPStreakLog()
     {
-        this.plugin = plugin;
         streakLogFile = new File(DeathTpPlus.dataFolder, STREAK_LOG_FILE);
         if (!streakLogFile.exists()) {
             try {
@@ -127,17 +126,17 @@ public class DTPStreakLog
             // Deaths
             String deathStreakMessage = DTPConfig.getDeathStreakMessage(deathStreakRecord.getCount());
             if (deathStreakMessage != null) {
-                plugin.getServer().getPluginManager().callEvent(new DeathStreakEvent(deathDetail.getPlayer(), deathDetail.getKiller(), deathStreakMessage, deathStreakRecord.getCount()));
+                Bukkit.getPluginManager().callEvent(new DeathStreakEvent(deathDetail.getPlayer(), deathDetail.getKiller(), deathStreakMessage, deathStreakRecord.getCount()));
             }
             // Kills
             String multiKillMessage = DTPConfig.getMultiKillMessage(killStreakRecord.getMultiKillCount());
             if (multiKillMessage != null && killStreakRecord.isWithinMutiKillTimeWindow(Long.valueOf(DTPConfig.configValues.get(ConfigValueType.MULTIKILL_TIMEWINDOW)))) {
-                plugin.getServer().getPluginManager().callEvent(new KillStreakEvent(deathDetail.getKiller(), deathDetail.getPlayer(), multiKillMessage, killStreakRecord.getMultiKillCount(), true));
+                Bukkit.getPluginManager().callEvent(new KillStreakEvent(deathDetail.getKiller(), deathDetail.getPlayer(), multiKillMessage, killStreakRecord.getMultiKillCount(), true));
             }
             else {
                 String killStreakMessage = DTPConfig.getKillStreakMessage(killStreakRecord.getCount());
                 if (killStreakMessage != null) {
-                    plugin.getServer().getPluginManager().callEvent(new KillStreakEvent(deathDetail.getKiller(), deathDetail.getPlayer(), killStreakMessage, killStreakRecord.getCount(), false));
+                    Bukkit.getPluginManager().callEvent(new KillStreakEvent(deathDetail.getKiller(), deathDetail.getPlayer(), killStreakMessage, killStreakRecord.getCount(), false));
                 }
             }
         }

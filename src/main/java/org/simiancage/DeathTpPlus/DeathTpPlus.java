@@ -5,11 +5,10 @@ import java.io.File;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,10 +27,6 @@ import com.ensifera.animosity.craftirc.CraftIRC;
 public class DeathTpPlus extends JavaPlugin
 {
     public static final File dataFolder = new File("plugins" + File.separator + "DeathTpPlus");
-
-    // damage and death listener
-    private final DTPEntityListener entityListener = new DTPEntityListener(this);
-    private final DTPStreakListener streakListener = new DTPStreakListener(this);
 
     // plugin variables
     public static DTPLogger logger = new DTPLogger();
@@ -83,13 +78,12 @@ public class DeathTpPlus extends JavaPlugin
         config = new DTPConfig();
         deathLocationLog = new DTPDeathLocationLog();
         deathLog = new DTPDeathLog();
-        streakLog = new DTPStreakLog(this);
+        streakLog = new DTPStreakLog();
         commandHandler = new CommandHandler();
 
         setupDependencies();
-
-        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.CUSTOM_EVENT, streakListener, Priority.Normal, this);
+        Bukkit.getPluginManager().registerEvents(new DTPEntityListener(), this);
+        Bukkit.getPluginManager().registerEvents(new DTPStreakListener(), this);
 
         logger.info("version " + getDescription().getVersion() + " is enabled!");
     }

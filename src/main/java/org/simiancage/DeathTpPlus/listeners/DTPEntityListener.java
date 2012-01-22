@@ -4,9 +4,11 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityListener;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
 import org.simiancage.DeathTpPlus.models.DeathDetail;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
@@ -14,15 +16,13 @@ import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigFlagType;
 import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigValueType;
 import org.simiancage.DeathTpPlus.utils.DTPUtils;
 
-public class DTPEntityListener extends EntityListener
+public class DTPEntityListener implements Listener
 {
-    public static DeathTpPlus plugin;
-
-    public DTPEntityListener(DeathTpPlus instance)
+    public DTPEntityListener()
     {
-        plugin = instance;
     }
 
+    @EventHandler(event = EntityDeathEvent.class, priority = EventPriority.NORMAL)
     public void onEntityDeath(EntityDeathEvent event)
     {
         DeathDetail deathDetail;
