@@ -7,15 +7,27 @@ import org.simiancage.DeathTpPlus.models.StreakRecord;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
 import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigFlagType;
 
-public class StreakCommand implements Command
+public class StreakCommand extends BasicCommand
 {
-
-    public Boolean execute(CommandSender sender, String[] args)
+    public StreakCommand(DeathTpPlus plugin)
     {
-        if (args.length > 1)
-            return false;
+        super("Streak");
+        setDescription("Display player streak counts");
+        setUsage("/dtp streak §9[player]");
+        setArgumentRange(0, 1);
+        setIdentifiers("streak");
+        setPermission("deathtpplus.streak");
+    }
 
+    @Override
+    public boolean execute(CommandSender sender, String identifier, String[] args)
+    {
         if (DTPConfig.configFlags.get(ConfigFlagType.SHOW_STREAKS)) {
+
+            if (args.length < 1 && !(sender instanceof Player)) {
+                sender.sendMessage("Console cannot display streaks for themselves!");
+                return true;
+            }
 
             StreakRecord streak = DeathTpPlus.streakLog.getRecord(args.length > 0 ? args[0] : ((Player) sender).getName());
 
@@ -43,10 +55,5 @@ public class StreakCommand implements Command
         }
 
         return true;
-    }
-
-    public String getPermission()
-    {
-        return "deathtpplus.streak";
     }
 }

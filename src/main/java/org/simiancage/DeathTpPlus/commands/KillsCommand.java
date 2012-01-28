@@ -6,24 +6,37 @@ import org.simiancage.DeathTpPlus.DeathTpPlus;
 import org.simiancage.DeathTpPlus.models.DeathRecord;
 import org.simiancage.DeathTpPlus.models.DeathRecord.DeathRecordType;
 
-public class KillsCommand implements Command
+public class KillsCommand extends BasicCommand
 {
-    public Boolean execute(CommandSender sender, String[] args)
+    public KillsCommand(DeathTpPlus plugin)
+    {
+        super("Kills");
+        setDescription("Display player kill counts");
+        setUsage("/dtp kills §9[killer] [victim]");
+        setArgumentRange(0, 2);
+        setIdentifiers("kills");
+        setPermission("deathtpplus.kills");
+    }
+
+    @Override
+    public boolean execute(CommandSender sender, String identifier, String[] args)
     {
         int total;
 
-        if (args.length > 2)
-            return false;
-
         switch (args.length) {
             case 0:
-                Player player = (Player) sender;
-                total = DeathTpPlus.deathLog.getTotalByType(player.getName(), DeathRecordType.kill);
-                if (total > -1) {
-                    sender.sendMessage(String.format("You have %d kill(s)", total));
+                if (sender instanceof Player) {
+                    Player player = (Player) sender;
+                    total = DeathTpPlus.deathLog.getTotalByType(player.getName(), DeathRecordType.kill);
+                    if (total > -1) {
+                        sender.sendMessage(String.format("You have %d kill(s)", total));
+                    }
+                    else {
+                        sender.sendMessage("No record found.");
+                    }
                 }
                 else {
-                    sender.sendMessage("No record found.");
+                    sender.sendMessage("Console cannot display deaths for themselves!");
                 }
                 break;
             case 1:
@@ -44,10 +57,5 @@ public class KillsCommand implements Command
         }
 
         return true;
-    }
-
-    public String getPermission()
-    {
-        return "deathtpplus.kills";
     }
 }

@@ -13,6 +13,12 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.simiancage.DeathTpPlus.commands.CommandHandler;
+import org.simiancage.DeathTpPlus.commands.DeathTpCommand;
+import org.simiancage.DeathTpPlus.commands.DeathsCommand;
+import org.simiancage.DeathTpPlus.commands.HelpCommand;
+import org.simiancage.DeathTpPlus.commands.KillsCommand;
+import org.simiancage.DeathTpPlus.commands.ReportCommand;
+import org.simiancage.DeathTpPlus.commands.StreakCommand;
 import org.simiancage.DeathTpPlus.listeners.DTPEntityListener;
 import org.simiancage.DeathTpPlus.listeners.DTPStreakListener;
 import org.simiancage.DeathTpPlus.logs.DTPDeathLog;
@@ -34,7 +40,7 @@ public class DeathTpPlus extends JavaPlugin
     public static DTPDeathLocationLog deathLocationLog;
     public static DTPDeathLog deathLog;
     public static DTPStreakLog streakLog;
-    private CommandHandler commandHandler;
+    private static CommandHandler commandHandler = new CommandHandler();
 
     // permissions & economy
     public static Permission permission = null;
@@ -67,6 +73,22 @@ public class DeathTpPlus extends JavaPlugin
         }
     }
 
+    private void registerEvents()
+    {
+        Bukkit.getPluginManager().registerEvents(new DTPEntityListener(), this);
+        Bukkit.getPluginManager().registerEvents(new DTPStreakListener(), this);
+    }
+
+    private void registerCommands()
+    {
+        commandHandler.addCommand(new HelpCommand(this));
+        commandHandler.addCommand(new KillsCommand(this));
+        commandHandler.addCommand(new DeathsCommand(this));
+        commandHandler.addCommand(new StreakCommand(this));
+        commandHandler.addCommand(new ReportCommand(this));
+        commandHandler.addCommand(new DeathTpCommand(this));
+    }
+
     public void onDisable()
     {
         logger.info("Disabled");
@@ -79,11 +101,10 @@ public class DeathTpPlus extends JavaPlugin
         deathLocationLog = new DTPDeathLocationLog();
         deathLog = new DTPDeathLog();
         streakLog = new DTPStreakLog();
-        commandHandler = new CommandHandler();
 
         setupDependencies();
-        Bukkit.getPluginManager().registerEvents(new DTPEntityListener(), this);
-        Bukkit.getPluginManager().registerEvents(new DTPStreakListener(), this);
+        registerEvents();
+        registerCommands();
 
         logger.info("version " + getDescription().getVersion() + " is enabled!");
     }
@@ -91,7 +112,7 @@ public class DeathTpPlus extends JavaPlugin
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
     {
-        return commandHandler.dispatch(sender, commandLabel, args);
+        return commandHandler.dispatch(sender, cmd, commandLabel, args);
     }
 
     public static boolean hasPermission(Player player, String name)
@@ -100,5 +121,10 @@ public class DeathTpPlus extends JavaPlugin
             return permission.has(player, name);
         }
         return player.hasPermission(name);
+    }
+
+    public CommandHandler getCommandHandler()
+    {
+        return commandHandler;
     }
 }

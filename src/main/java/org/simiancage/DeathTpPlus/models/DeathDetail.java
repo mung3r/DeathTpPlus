@@ -72,7 +72,7 @@ public class DeathDetail
                 causeOfDeath = DeathEventType.BLOCK_EXPLOSION;
             }
             else {
-                DeathTpPlus.logger.info("[DeathTpPlus] unknown enitity damager" + damager);
+                DeathTpPlus.logger.info("Unknown enitity damager" + damager);
             }
         }
         else if (damageEvent != null) {

@@ -61,6 +61,19 @@ public class DTPDeathLog
         return null;
     }
 
+    public List<DeathRecord> getRecordsByType(String playerName, DeathRecordType type)
+    {
+        List<DeathRecord> records = new ArrayList<DeathRecord>();
+
+        for (DeathRecord record : getRecords(playerName)) {
+            if (record.getPlayerName().equalsIgnoreCase(playerName) && record.getType() == type) {
+                records.add(record);
+            }
+        }
+
+        return records;
+    }
+
     public List<DeathRecord> getRecords(String playerName)
     {
         List<DeathRecord> records = new ArrayList<DeathRecord>();

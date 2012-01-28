@@ -11,11 +11,26 @@ import org.simiancage.DeathTpPlus.models.DeathLocationRecord;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
 import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigValueType;
 
-public class DeathTpCommand implements Command
+public class DeathTpCommand extends BasicCommand
 {
-
-    public Boolean execute(CommandSender sender, String[] args)
+    public DeathTpCommand(DeathTpPlus plugin)
     {
+        super("Recall");
+        setDescription("Teleport to where you last died");
+        setUsage("/dtp recall");
+        setArgumentRange(0, 0);
+        setIdentifiers("recall");
+        setPermission("deathtpplus.deathtp");
+    }
+
+    @Override
+    public boolean execute(CommandSender sender, String identifier, String[] args)
+    {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("Console cannot recall themselves!");
+            return true;
+        }
+
         boolean worldTravel = false;
         Player player = (Player) sender;
         String thisWorld = player.getWorld().getName().toString();
@@ -44,7 +59,7 @@ public class DeathTpCommand implements Command
                     registerTp(player);
                 }
                 else {
-                    player.sendMessage("You do not have the right to travel between worlds via deathtp!");
+                    player.sendMessage("You do not have the right to travel between worlds!");
                 }
             }
             else {
@@ -52,13 +67,11 @@ public class DeathTpCommand implements Command
                 registerTp(player);
             }
         }
+        else {
+            player.sendMessage("Your last death location is unknown!");
+        }
 
         return true;
-    }
-
-    public String getPermission()
-    {
-        return "deathtpplus.deathtp";
     }
 
     private Boolean canTp(Player player)
@@ -83,7 +96,7 @@ public class DeathTpCommand implements Command
         if (hasFunds(player)) {
             double deathTpCost = Double.valueOf(DTPConfig.configValues.get(ConfigValueType.DEATHTP_COST).trim()).doubleValue();
             DeathTpPlus.economy.withdrawPlayer(player.getName(), deathTpCost);
-            player.sendMessage(String.format("You used %s to use /deathtp.", DeathTpPlus.economy.format(deathTpCost)));
+            player.sendMessage(String.format("You spent %s to use this command.", DeathTpPlus.economy.format(deathTpCost)));
         }
     }
 
@@ -96,7 +109,7 @@ public class DeathTpCommand implements Command
             return true;
         }
 
-        player.sendMessage(String.format("You must be holding a %s to teleport.", Material.getMaterial(chargeItem).toString().toLowerCase()));
+        player.sendMessage(String.format("You must be holding a(n) %s to use this command!", Material.getMaterial(chargeItem).toString().toLowerCase()));
 
         return false;
     }
@@ -114,7 +127,7 @@ public class DeathTpCommand implements Command
                 return true;
             }
             else {
-                player.sendMessage(String.format("You need %s coins to use /deathtp.", DeathTpPlus.economy.format(deathTpCost)));
+                player.sendMessage(String.format("You need %s coins to use this command!", DeathTpPlus.economy.format(deathTpCost)));
             }
         }
         return false;
