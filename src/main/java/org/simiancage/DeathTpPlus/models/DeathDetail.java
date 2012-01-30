@@ -66,7 +66,17 @@ public class DeathDetail
                     murderWeapon = ((Projectile) damager).toString().replace("Craft", "");
                     killer = (Player) ((Projectile) damager).getShooter();
                 }
-                // TODO: death by dispenser?
+                else if (((Projectile) damager).getShooter() instanceof Creature) {
+                    try {
+                        causeOfDeath = DeathEventType.valueOf(DTPUtils.getCreatureType(((Projectile) damager).getShooter()).toString());
+                    }
+                    catch (IllegalArgumentException e) {
+                        causeOfDeath = DeathEventType.UNKNOWN;
+                    }
+                }
+                else {
+                    causeOfDeath = DeathEventType.DISPENSER;
+                }
             }
             else if (damager instanceof TNTPrimed) {
                 causeOfDeath = DeathEventType.BLOCK_EXPLOSION;

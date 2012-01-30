@@ -287,6 +287,9 @@ blaze:
 enderdragon:
 - '&5%n&7 was killed by a dragon!'
 
+dispenser:
+- '&5%n&7 fell victim to a trap!'
+
 # ----- Streaks
 
 # format <#of kills> <text to display> %n = player getting the message (in this case, the one on a killstreak).
