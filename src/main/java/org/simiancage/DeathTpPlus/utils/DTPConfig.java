@@ -90,8 +90,6 @@ public class DTPConfig
 
     private FileConfiguration getConfig(File file)
     {
-        FileConfiguration config = null;
-
         if (!file.exists()) {
             try {
                 file.getParentFile().mkdir();
@@ -107,8 +105,6 @@ public class DTPConfig
                 inputStream.close();
                 outputStream.close();
 
-                config = plugin.getConfig();
-
                 DeathTpPlus.logger.info("Default config created successfully!");
             }
             catch (Exception e) {
@@ -116,7 +112,7 @@ public class DTPConfig
             }
         }
 
-        return config;
+        return plugin.getConfig();
     }
 
     private String mapTypeToNodeName(DeathEventType deathEventType)
