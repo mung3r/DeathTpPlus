@@ -1,4 +1,5 @@
 # ----- Standard plugin features
+
 # Show the death messages on the server
 show-deathnotify: 'true'
 
@@ -30,6 +31,9 @@ allow-worldtravel: 'no'
 multikill-timewindow: 5000
 
 # ----- Death Messages
+
+# Output how many of each death message was loaded into the server.log
+verbose: 'false'
 
 # Must contain at least 1 line. If there are more, it will appear randomly when a person dies.
 # %n for player who died

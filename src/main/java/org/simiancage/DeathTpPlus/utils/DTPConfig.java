@@ -3,12 +3,11 @@ package org.simiancage.DeathTpPlus.utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
 import org.simiancage.DeathTpPlus.models.DeathDetail;
 
@@ -25,7 +24,7 @@ public class DTPConfig
     };
 
     public static enum ConfigFlagType {
-        SHOW_DEATHNOTIFY, ALLOW_DEATHTP, SHOW_STREAKS, SHOW_SIGN, ALLOW_DEATHLOG,
+        SHOW_DEATHNOTIFY, ALLOW_DEATHTP, SHOW_STREAKS, SHOW_SIGN, ALLOW_DEATHLOG, VERBOSE
     }
 
     private static HashMap<DeathEventType, List<String>> deathMessages = new HashMap<DeathEventType, List<String>>();
@@ -42,19 +41,15 @@ public class DTPConfig
     private static File configFile;
     private static Random random = new Random();
 
-    private Configuration configuration;
+    private FileConfiguration configuration;
+    private DeathTpPlus plugin;
 
-    public DTPConfig()
+    public DTPConfig(DeathTpPlus plugin)
     {
+        this.plugin = plugin;
+
         configFile = new File(DeathTpPlus.dataFolder, CONFIG_FILE);
         configuration = getConfig(configFile);
-        configuration.load();
-
-        // Death Event nodes
-        for (DeathEventType deathEventType : DeathEventType.values()) {
-            deathMessages.put(deathEventType, configuration.getStringList(mapTypeToNodeName(deathEventType), new ArrayList<String>()));
-            DeathTpPlus.logger.info(deathMessages.get(deathEventType).size() + " messages loaded for " + deathEventType);
-        }
 
         // Configuration nodes
         for (ConfigValueType configNode : ConfigValueType.values()) {
@@ -65,15 +60,23 @@ public class DTPConfig
             configFlags.put(configNode, new Boolean(configuration.getString(configNode.toString().toLowerCase().replace("_", "-"), "")));
         }
 
+        // Death Event nodes
+        for (DeathEventType deathEventType : DeathEventType.values()) {
+            deathMessages.put(deathEventType, configuration.getStringList(mapTypeToNodeName(deathEventType)));
+            if (configFlags.get(ConfigFlagType.VERBOSE)) {
+                DeathTpPlus.logger.info(deathMessages.get(deathEventType).size() + " messages loaded for " + deathEventType);
+            }
+        }
+
         // Kill Streak nodes
-        killStreakMessages = configuration.getStringList("killstreak", new ArrayList<String>());
+        killStreakMessages = configuration.getStringList("killstreak");
         DeathTpPlus.logger.info(killStreakMessages.size() + " messages loaded for killstreak");
 
         // Death Streak nodes
-        deathStreakMessages = configuration.getStringList("deathstreak", new ArrayList<String>());
+        deathStreakMessages = configuration.getStringList("deathstreak");
         DeathTpPlus.logger.info(deathStreakMessages.size() + " messages loaded for deathstreak");
 
-        multiKillMessages = configuration.getStringList("multikill", new ArrayList<String>());
+        multiKillMessages = configuration.getStringList("multikill");
         DeathTpPlus.logger.info(multiKillMessages.size() + " messages loaded for multikill");
 
         if (configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("yes") || configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("no")
@@ -85,7 +88,7 @@ public class DTPConfig
         }
     }
 
-    private Configuration getConfig(File file)
+    private FileConfiguration getConfig(File file)
     {
         if (!file.exists()) {
             try {
@@ -109,7 +112,7 @@ public class DTPConfig
             }
         }
 
-        return new Configuration(file);
+        return plugin.getConfig();
     }
 
     private String mapTypeToNodeName(DeathEventType deathEventType)

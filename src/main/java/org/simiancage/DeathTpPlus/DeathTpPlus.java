@@ -97,7 +97,7 @@ public class DeathTpPlus extends JavaPlugin
     public void onEnable()
     {
         logger.setName(getDescription().getName());
-        config = new DTPConfig();
+        config = new DTPConfig(this);
         deathLocationLog = new DTPDeathLocationLog();
         deathLog = new DTPDeathLog();
         streakLog = new DTPStreakLog();
