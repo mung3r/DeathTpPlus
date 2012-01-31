@@ -32,8 +32,8 @@ permissions:
         description: Gives access to the kills command
         default: op
     deathtpplus.report:
-    	description: Gives access to the report command
-    	default: op
+        description: Gives access to the report command
+        default: op
     deathtpplus.worldtravel:
         description: Allows teleporting to another worlds death location
         default: op
