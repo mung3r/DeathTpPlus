@@ -13,13 +13,13 @@ public class DTPStreakListener implements Listener
     {
     }
 
-    @EventHandler(event = DeathStreakEvent.class, priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onDeathStreakEvent(DeathStreakEvent event)
     {
         Bukkit.broadcastMessage(event.getMessage().replace("%n", event.getPlayer().getName()));
     }
 
-    @EventHandler(event = KillStreakEvent.class, priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onKillStreakEvent(KillStreakEvent event)
     {
         Bukkit.broadcastMessage(event.getMessage().replace("%n", event.getPlayer().getName()));

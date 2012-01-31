@@ -22,7 +22,7 @@ public class DTPEntityListener implements Listener
     {
     }
 
-    @EventHandler(event = EntityDeathEvent.class, priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityDeath(EntityDeathEvent event)
     {
         DeathDetail deathDetail;
