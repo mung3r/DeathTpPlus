@@ -19,6 +19,7 @@ import org.simiancage.DeathTpPlus.commands.HelpCommand;
 import org.simiancage.DeathTpPlus.commands.KillsCommand;
 import org.simiancage.DeathTpPlus.commands.ReportCommand;
 import org.simiancage.DeathTpPlus.commands.StreakCommand;
+import org.simiancage.DeathTpPlus.commands.TopCommand;
 import org.simiancage.DeathTpPlus.listeners.DTPEntityListener;
 import org.simiancage.DeathTpPlus.listeners.DTPStreakListener;
 import org.simiancage.DeathTpPlus.logs.DTPDeathLog;
@@ -86,6 +87,7 @@ public class DeathTpPlus extends JavaPlugin
         commandHandler.addCommand(new DeathsCommand(this));
         commandHandler.addCommand(new StreakCommand(this));
         commandHandler.addCommand(new ReportCommand(this));
+        commandHandler.addCommand(new TopCommand(this));
         commandHandler.addCommand(new DeathTpCommand(this));
     }
 

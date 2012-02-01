@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.simiancage.DeathTpPlus.DeathTpPlus;
@@ -32,6 +33,24 @@ public class DTPDeathLog
                 DeathTpPlus.logger.severe("Failed to create death log: " + e.toString());
             }
         }
+    }
+
+    public Hashtable<String, Integer> getTotalsByType(DeathRecordType type)
+    {
+        Hashtable<String, Integer> totals = new Hashtable<String, Integer>();
+
+        for (DeathRecord record : getRecords()) {
+            if (record.getType() == type) {
+                if (totals.containsKey(record.getPlayerName())) {
+                    totals.put(record.getPlayerName(), totals.get(record.getPlayerName()) + 1);
+                }
+                else {
+                    totals.put(record.getPlayerName(), Integer.valueOf(1));
+                }
+            }
+        }
+
+        return totals;
     }
 
     public int getTotalByType(String playerName, DeathRecordType type)
@@ -78,14 +97,24 @@ public class DTPDeathLog
     {
         List<DeathRecord> records = new ArrayList<DeathRecord>();
 
+        for (DeathRecord deathRecord : getRecords()) {
+            if (playerName.equalsIgnoreCase(deathRecord.getPlayerName())) {
+                records.add(deathRecord);
+            }
+        }
+
+        return records;
+    }
+
+    public List<DeathRecord> getRecords()
+    {
+        List<DeathRecord> records = new ArrayList<DeathRecord>();
+
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(deathLogFile));
             String line = null;
             while ((line = bufferedReader.readLine()) != null) {
-                DeathRecord deathRecord = new DeathRecord(line);
-                if (playerName.equalsIgnoreCase(deathRecord.getPlayerName())) {
-                    records.add(deathRecord);
-                }
+                records.add(new DeathRecord(line));
             }
 
             bufferedReader.close();

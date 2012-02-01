@@ -18,6 +18,7 @@ permissions:
             deathtpplus.deaths: true
             deathtpplus.kills: true
             deathtpplus.report: true
+            deathtpplus.top: true
             deathtpplus.worldtravel: true
     deathtpplus.deathtp:
         description: Gives access to the deathtp command
@@ -33,6 +34,9 @@ permissions:
         default: op
     deathtpplus.report:
         description: Gives access to the report command
+        default: op
+    deathtpplus.top:
+        description: Gives access to the top command
         default: op
     deathtpplus.worldtravel:
         description: Allows teleporting to another worlds death location
