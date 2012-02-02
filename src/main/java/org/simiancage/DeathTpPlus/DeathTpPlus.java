@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.getspout.spout.Spout;
 import org.simiancage.DeathTpPlus.commands.CommandHandler;
 import org.simiancage.DeathTpPlus.commands.DeathTpCommand;
 import org.simiancage.DeathTpPlus.commands.DeathsCommand;
@@ -47,6 +48,9 @@ public class DeathTpPlus extends JavaPlugin
     public static Permission permission = null;
     public static Economy economy = null;
 
+    // Spout
+    public static Spout spout = null;
+
     // CraftIRC
     public static CraftIRC craftIRCPlugin = null;
 
@@ -72,12 +76,18 @@ public class DeathTpPlus extends JavaPlugin
             craftIRCPlugin = (CraftIRC) plugin;
             logger.info("CraftIRC support enabled");
         }
+
+        Plugin sPlugin = this.getServer().getPluginManager().getPlugin("Spout");
+        if (sPlugin != null && sPlugin instanceof Spout) {
+            spout = (Spout) sPlugin;
+            logger.info("Spout support enabled");
+        }
     }
 
     private void registerEvents()
     {
         Bukkit.getPluginManager().registerEvents(new DTPEntityListener(), this);
-        Bukkit.getPluginManager().registerEvents(new DTPStreakListener(), this);
+        Bukkit.getPluginManager().registerEvents(new DTPStreakListener(this), this);
     }
 
     private void registerCommands()
