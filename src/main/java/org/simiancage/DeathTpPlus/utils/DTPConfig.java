@@ -24,13 +24,15 @@ public class DTPConfig
     };
 
     public static enum ConfigFlagType {
-        SHOW_DEATHNOTIFY, ALLOW_DEATHTP, SHOW_STREAKS, SHOW_SIGN, ALLOW_DEATHLOG, VERBOSE
+        SHOW_DEATHNOTIFY, ALLOW_DEATHTP, SHOW_STREAKS, SHOW_SIGN, ALLOW_DEATHLOG, PLAY_SOUNDS, VERBOSE
     }
 
     private static HashMap<DeathEventType, List<String>> deathMessages = new HashMap<DeathEventType, List<String>>();
     private static List<String> deathStreakMessages;
     private static List<String> killStreakMessages;
     private static List<String> multiKillMessages;
+    private static List<String> killStreakSounds;
+    private static List<String> multiKillSounds;
 
     public static HashMap<ConfigValueType, String> configValues = new HashMap<ConfigValueType, String>();
     public static HashMap<ConfigFlagType, Boolean> configFlags = new HashMap<ConfigFlagType, Boolean>();
@@ -40,6 +42,8 @@ public class DTPConfig
     private static final String DEFAULT_DEATH_MESSAGE = "%n died from unknown causes";
     private static File configFile;
     private static Random random = new Random();
+    private static String soundUrl;
+    private static String soundFormat;
 
     private FileConfiguration configuration;
     private DeathTpPlus plugin;
@@ -78,6 +82,16 @@ public class DTPConfig
 
         multiKillMessages = configuration.getStringList("multikill");
         DeathTpPlus.logger.info(multiKillMessages.size() + " messages loaded for multikill");
+
+        // Sound nodes
+        killStreakSounds = configuration.getStringList("sounds.killstreaks");
+        DeathTpPlus.logger.info(killStreakSounds.size() + " sounds loaded for killstreaks");
+
+        multiKillSounds = configuration.getStringList("sounds.multikills");
+        DeathTpPlus.logger.info(multiKillSounds.size() + " sounds loaded for multikill");
+
+        soundUrl = configuration.getString("sounds.url");
+        soundFormat = configuration.getString("sounds.format");
 
         if (configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("yes") || configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("no")
                 || configValues.get(ConfigValueType.ALLOW_WORLDTRAVEL).equalsIgnoreCase("permissions")) {
@@ -185,5 +199,41 @@ public class DTPConfig
         }
 
         return null;
+    }
+
+    public static String getKillStreakSound(Integer killCount) {
+        if (killCount == null || killStreakSounds == null) {
+            return null;
+        }
+        for (String message : killStreakSounds) {
+            String parts[] = message.split(":");
+            if (Integer.parseInt(parts[0]) == killCount) {
+                return DTPUtils.convertColorCodes(parts[1]);
+            }
+        }
+
+        return null;
+    }
+
+    public static String getMultiKillSound(Integer killCount) {
+        if (killCount == null || multiKillSounds == null) {
+            return null;
+        }
+        for (String message : multiKillSounds) {
+            String parts[] = message.split(":");
+            if (Integer.parseInt(parts[0]) == killCount) {
+                return DTPUtils.convertColorCodes(parts[1]);
+            }
+        }
+
+        return null;
+    }
+
+    public static String getSoundUrl() {
+        return soundUrl;
+    }
+
+    public static String getSoundFormat() {
+        return soundFormat;
     }
 }

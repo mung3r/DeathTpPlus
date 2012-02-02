@@ -7,8 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.simiancage.DeathTpPlus.DeathTpPlus;
 import org.simiancage.DeathTpPlus.models.DeathDetail;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
@@ -16,23 +16,15 @@ import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigFlagType;
 import org.simiancage.DeathTpPlus.utils.DTPConfig.ConfigValueType;
 import org.simiancage.DeathTpPlus.utils.DTPUtils;
 
-public class DTPEntityListener implements Listener
-{
-    public DTPEntityListener()
-    {
-    }
+public class DTPEntityListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onEntityDeath(EntityDeathEvent event)
-    {
-        DeathDetail deathDetail;
-
-        if (event.getEntity() instanceof Player) {
-            deathDetail = new DeathDetail(event);
-        }
-        else {
+    public void onEntityDeath(EntityDeathEvent event) {
+        if (!(event.getEntity() instanceof Player)) {
             return;
         }
+
+        DeathDetail deathDetail = new DeathDetail(event);
 
         if (DTPConfig.configFlags.get(ConfigFlagType.ALLOW_DEATHTP)) {
             DeathTpPlus.deathLocationLog.setRecord(deathDetail);
@@ -49,7 +41,7 @@ public class DTPEntityListener implements Listener
         if (DTPConfig.configFlags.get(ConfigFlagType.SHOW_DEATHNOTIFY)) {
 
             String deathMessage = DTPConfig.getDeathMessage(deathDetail);
-            
+
             if (event instanceof PlayerDeathEvent) {
                 ((PlayerDeathEvent) event).setDeathMessage(deathMessage);
             }
