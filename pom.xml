@@ -6,11 +6,11 @@
   <repositories>
     <repository>
       <id>bukkit-repo</id>
-      <url>http://repo.bukkit.org/content/groups/public/</url>
+      <url>http://ci.bukkit.org/plugin/repository/everything/</url>
     </repository>
     <repository>
       <id>spout-repo</id>
-      <url>http://nexus.spout.org/content/repositories/spout-snapshots/</url>
+      <url>http://repo.spout.org</url>
     </repository>
     <repository>
       <id>vault-repo</id>
@@ -25,7 +25,7 @@
     </dependency>
     <dependency>
       <groupId>org.getspout</groupId>
-      <artifactId>spoutpluginapi</artifactId>
+      <artifactId>spoutplugin</artifactId>
       <version>dev-SNAPSHOT</version>
     </dependency>
     <dependency>
