@@ -6,7 +6,7 @@
   <repositories>
     <repository>
       <id>bukkit-repo</id>
-      <url>http://ci.bukkit.org/plugin/repository/everything/</url>
+      <url>http://repo.bukkit.org/content/groups/public/</url>
     </repository>
     <repository>
       <id>spout-repo</id>
