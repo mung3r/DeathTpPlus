@@ -10,10 +10,10 @@ public class KillStreakEvent extends Event
     private Player player;
     private Player victim;
     private String message;
-    private Integer kills;
-    private Boolean isMultiKill;
+    private int kills;
+    private boolean isMultiKill;
 
-    public KillStreakEvent(Player player, Player victim, String message, Integer kills, Boolean isMultiKill)
+    public KillStreakEvent(Player player, Player victim, String message, int kills, boolean isMultiKill)
     {
         this.player = player;
         this.message = message;

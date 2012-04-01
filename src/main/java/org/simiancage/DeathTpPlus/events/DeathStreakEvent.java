@@ -10,9 +10,9 @@ public class DeathStreakEvent extends Event
     private Player player;
     private Player killer;
     private String message;
-    private Integer deaths;
+    private int deaths;
 
-    public DeathStreakEvent(Player player, Player killer, String message, Integer deaths)
+    public DeathStreakEvent(Player player, Player killer, String message, int deaths)
     {
         this.player = player;
         this.killer = killer;
