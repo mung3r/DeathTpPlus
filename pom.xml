@@ -21,7 +21,7 @@
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit</artifactId>
-      <version>1.2.4-R1.0</version>
+      <version>1.2.5-R3.0</version>
     </dependency>
     <dependency>
       <groupId>org.getspout</groupId>
@@ -38,7 +38,7 @@
     <dependency>
         <groupId>net.milkbowl.vault</groupId>
         <artifactId>Vault</artifactId>
-        <version>1.2.13-SNAPSHOT</version>
+        <version>1.2.16-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <build>
@@ -67,7 +67,7 @@
   <description>DeathNotify + DeathTP + Streaks + DeathLog</description>
   <ciManagement>
   	<system>jenkins</system>
-  	<url>http://ci.milkbowl.net/job/DeathTpPlus/</url>
+  	<url>http://ci.bighatchet.net/job/DeathTpPlus/</url>
   </ciManagement>
   <scm>
   	<url>https://github.com/mung3r/DeathTpPlus</url>
