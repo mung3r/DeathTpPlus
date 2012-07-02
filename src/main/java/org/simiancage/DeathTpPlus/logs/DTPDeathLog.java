@@ -79,9 +79,11 @@ public class DTPDeathLog implements Runnable
             }
 
             tmpDeathLogWriter.close();
-            tmpDeathLogFile.renameTo(deathLogFile);
+            if (!tmpDeathLogFile.renameTo(deathLogFile)) {
+                throw new Exception("Failed to rename death log.");
+            }
         }
-        catch (IOException e) {
+        catch (Exception e) {
             DeathTpPlus.logger.severe("Failed to edit death log: " + e.toString());
         }
     }
