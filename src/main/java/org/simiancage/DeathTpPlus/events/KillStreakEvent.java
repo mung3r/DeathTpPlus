@@ -16,6 +16,7 @@ public class KillStreakEvent extends Event
     public KillStreakEvent(Player player, Player victim, String message, int kills, boolean isMultiKill)
     {
         this.player = player;
+        this.victim = victim;
         this.message = message;
         this.kills = kills;
         this.isMultiKill = isMultiKill;
