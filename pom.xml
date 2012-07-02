@@ -13,8 +13,8 @@
       <url>http://repo.spout.org</url>
     </repository>
     <repository>
-      <id>milkbowl-repo</id>
-      <url>http://ci.herocraftonline.com/plugin/repository/everything/</url>
+      <id>vault-repo</id>
+      <url>http://ci.herocraftonline.com/plugin/repository/project/Vault/LastSuccessful/repository/</url>
     </repository>
   </repositories>
   <dependencies>

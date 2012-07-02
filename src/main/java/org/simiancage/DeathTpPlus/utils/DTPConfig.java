@@ -61,7 +61,7 @@ public class DTPConfig
         }
 
         for (ConfigFlagType configNode : ConfigFlagType.values()) {
-            configFlags.put(configNode, new Boolean(configuration.getString(configNode.toString().toLowerCase().replace("_", "-"), "")));
+            configFlags.put(configNode, Boolean.valueOf(configuration.getString(configNode.toString().toLowerCase().replace("_", "-"), "")));
         }
 
         // Death Event nodes
