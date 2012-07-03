@@ -34,7 +34,7 @@ public class DTPDeathLog implements Runnable
     public DTPDeathLog(DeathTpPlus plugin)
     {
         deaths = new Hashtable<String, DeathRecord>();
-        deathLogFile = new File(DeathTpPlus.dataFolder, DEATH_LOG_FILE);
+        deathLogFile = new File(DeathTpPlus.DATA_FOLDER, DEATH_LOG_FILE);
         if (!deathLogFile.exists()) {
             try {
                 deathLogFile.createNewFile();
@@ -68,7 +68,7 @@ public class DTPDeathLog implements Runnable
 
     public synchronized void save()
     {
-        File tmpDeathLogFile = new File(DeathTpPlus.dataFolder, DEATH_LOG_TMP);
+        File tmpDeathLogFile = new File(DeathTpPlus.DATA_FOLDER, DEATH_LOG_TMP);
 
         try {
             BufferedWriter tmpDeathLogWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpDeathLogFile), CHARSET));

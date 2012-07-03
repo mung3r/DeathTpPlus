@@ -53,7 +53,7 @@ public class DTPConfig
     {
         this.plugin = plugin;
 
-        configFile = new File(DeathTpPlus.dataFolder, CONFIG_FILE);
+        configFile = new File(DeathTpPlus.DATA_FOLDER, CONFIG_FILE);
         configuration = getConfig(configFile);
 
         // Configuration nodes
