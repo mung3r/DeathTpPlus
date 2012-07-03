@@ -88,9 +88,9 @@ public class DTPDeathLog implements Runnable
         }
     }
 
-    public Hashtable<String, Integer> getTotalsByType(DeathRecordType type)
+    public Map<String, Integer> getTotalsByType(DeathRecordType type)
     {
-        Hashtable<String, Integer> totals = new Hashtable<String, Integer>();
+        Map<String, Integer> totals = new Hashtable<String, Integer>();
 
         for (DeathRecord record : getRecords()) {
             if (record.getType() == type) {

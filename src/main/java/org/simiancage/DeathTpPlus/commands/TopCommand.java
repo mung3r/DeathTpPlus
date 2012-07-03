@@ -37,7 +37,7 @@ public class TopCommand extends BasicCommand
             }
         }
 
-        Hashtable<String, Integer> totals = null;
+        Map<String, Integer> totals = null;
         if (args[0].equalsIgnoreCase("kills")) {
             totals = DeathTpPlus.deathLog.getTotalsByType(DeathRecordType.kill);
         }
