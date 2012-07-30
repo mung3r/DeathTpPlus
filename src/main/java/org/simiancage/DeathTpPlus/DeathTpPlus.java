@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.getspout.spout.Spout;
+import org.getspout.spoutapi.Spout;
 import org.simiancage.DeathTpPlus.commands.CommandHandler;
 import org.simiancage.DeathTpPlus.commands.DeathTpCommand;
 import org.simiancage.DeathTpPlus.commands.DeathsCommand;
@@ -27,6 +27,7 @@ import org.simiancage.DeathTpPlus.logs.DTPDeathLog;
 import org.simiancage.DeathTpPlus.logs.DTPDeathLocationLog;
 import org.simiancage.DeathTpPlus.logs.DTPStreakLog;
 import org.simiancage.DeathTpPlus.utils.DTPConfig;
+import org.simiancage.DeathTpPlus.utils.CraftIRCEndPoint;
 import org.simiancage.DeathTpPlus.utils.DTPLogger;
 
 //craftirc
@@ -52,7 +53,7 @@ public class DeathTpPlus extends JavaPlugin
     public static Spout spout = null;
 
     // CraftIRC
-    public static CraftIRC craftIRCPlugin = null;
+    public static CraftIRCEndPoint craftIRCEndPoint;
 
     private void setupDependencies()
     {
@@ -73,7 +74,7 @@ public class DeathTpPlus extends JavaPlugin
         // hook CraftIRC
         Plugin plugin = this.getServer().getPluginManager().getPlugin("CraftIRC");
         if (plugin instanceof CraftIRC) {
-            craftIRCPlugin = (CraftIRC) plugin;
+            craftIRCEndPoint = new CraftIRCEndPoint((CraftIRC) plugin);
             logger.info("CraftIRC support enabled");
         }
 
